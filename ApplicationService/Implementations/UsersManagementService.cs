@@ -103,5 +103,95 @@ namespace ApplicationService.Implementations
                 return false;
             }
         }
+
+        public UserDTO FindUserByUsername(string username)
+        {
+            try
+            {
+                User user = ctx.Users.Where(u => u.username == username).FirstOrDefault();
+                if (user != null)
+                {
+                    return UserToDto(user);
+                }
+                else {
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public UserDTO FindUserByEmail(string email)
+        {
+            try
+            {
+                User user = ctx.Users.Where(u => u.email == email).FirstOrDefault();
+                if (user != null)
+                {
+                    return UserToDto(user);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public UserDTO FindUserByDisplayName(string Dname)
+        {
+            try
+            {
+                User user = ctx.Users.Where(u => u.displayName == Dname).FirstOrDefault();
+                if (user != null)
+                {
+                    return UserToDto(user);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public UserDTO TryLoginUser(string un, string up)
+        {
+            User temp_user = ctx.Users.Where(u => u.username == un && u.password == up).FirstOrDefault();
+            return UserToDto(temp_user);
+        }
+
+        public UserDTO UserToDto(User user) {
+            if (user == null) {
+                return null;
+            }
+            UserDTO uDto = new UserDTO
+            {
+                Id = user.Id,
+                username = user.username,
+                password = user.password,
+                displayName = user.password,
+                email = user.email,
+                phone_number = user.email,
+                bio = user.bio,
+                socialLink = user.socialLink,
+                rating = user.rating,
+                birthday = user.birthday,
+                gender = user.gender,
+                friendsIDS = user.friendsIDS,
+                hosted_eventsIDS = user.hosted_eventsIDS,
+                visited_eventsIDS = user.visited_eventsIDS
+            };
+            return uDto;
+        }
+
     }
 }

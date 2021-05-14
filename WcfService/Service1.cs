@@ -70,6 +70,30 @@ namespace WcfService
                 return "User is not updated!";
             }
         }
+
+        public UserDTO GetUserByUsername(string username)
+        {
+            UserDTO u = usersService.FindUserByUsername(username);
+            return u;
+        }
+
+        public UserDTO GetUserByEmail(string email)
+        {
+            UserDTO u = usersService.FindUserByEmail(email);
+            return u;
+        }
+
+        public UserDTO GetUserByDisplayName(string Dname)
+        {
+            UserDTO u = usersService.FindUserByDisplayName(Dname);
+            return u;
+        }
+
+        public UserDTO TryLogin(string username, string password)
+        {
+            UserDTO u = usersService.TryLoginUser(username,password);
+            return u;
+        }
         //friendships methods
         private FriendshipsManagementService friendsService = new FriendshipsManagementService();
         public List<FriendshipDTO> GetAllFriends()
@@ -155,5 +179,7 @@ namespace WcfService
                 return "Event is not deleted!";
             }
         }
+
+
     }
 }

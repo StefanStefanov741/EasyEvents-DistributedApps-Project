@@ -28,7 +28,7 @@ namespace Data.Entities
         [StringLength(200)]
         public string socialLink { get; set; }
         public float rating { get; set; }
-        public DateTime birthday { get; set; }
+        public DateTime? birthday { get; set; }
         [Required]
         public bool gender { get; set; }
         public List<int> friendsIDS { get; set; }

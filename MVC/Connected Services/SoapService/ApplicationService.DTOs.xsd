@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/ApplicationService.DTOs" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/ApplicationService.DTOs" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:complexType name="UserDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="bio" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="birthday" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="displayName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="email" nillable="true" type="xs:string" />
+      <xs:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="friendsIDS" nillable="true" type="q1:ArrayOfint" />
+      <xs:element minOccurs="0" name="gender" type="xs:boolean" />
+      <xs:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="hosted_eventsIDS" nillable="true" type="q2:ArrayOfint" />
+      <xs:element minOccurs="0" name="password" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="phone_number" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="rating" type="xs:float" />
+      <xs:element minOccurs="0" name="socialLink" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="username" nillable="true" type="xs:string" />
+      <xs:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="visited_eventsIDS" nillable="true" type="q3:ArrayOfint" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="UserDTO" nillable="true" type="tns:UserDTO" />
+  <xs:complexType name="ArrayOfUserDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="UserDTO" nillable="true" type="tns:UserDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfUserDTO" nillable="true" type="tns:ArrayOfUserDTO" />
+  <xs:complexType name="ArrayOfFriendshipDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="FriendshipDTO" nillable="true" type="tns:FriendshipDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfFriendshipDTO" nillable="true" type="tns:ArrayOfFriendshipDTO" />
+  <xs:complexType name="FriendshipDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="befriend_date" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="friendshipTier" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="pending" type="xs:boolean" />
+      <xs:element minOccurs="0" name="user1_id" type="xs:int" />
+      <xs:element minOccurs="0" name="user2_id" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="FriendshipDTO" nillable="true" type="tns:FriendshipDTO" />
+  <xs:complexType name="ArrayOfEventDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="EventDTO" nillable="true" type="tns:EventDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfEventDTO" nillable="true" type="tns:ArrayOfEventDTO" />
+  <xs:complexType name="EventDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Id" type="xs:int" />
+      <xs:element minOccurs="0" name="begins" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="createdOn" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="description" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ended" type="xs:boolean" />
+      <xs:element minOccurs="0" name="host_id" type="xs:int" />
+      <xs:element minOccurs="0" name="likes" type="xs:int" />
+      <xs:element minOccurs="0" name="location" nillable="true" type="xs:string" />
+      <xs:element xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="participantsIDS" nillable="true" type="q4:ArrayOfint" />
+      <xs:element minOccurs="0" name="title" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="EventDTO" nillable="true" type="tns:EventDTO" />
+</xs:schema>

@@ -19,6 +19,14 @@ namespace WcfService
         CompositeType GetDataUsingDataContract(CompositeType composite);
 
         //Users methods
+        [OperationContract]
+        UserDTO GetUserByUsername(string username);
+
+        [OperationContract]
+        UserDTO GetUserByEmail(string email);
+
+        [OperationContract]
+        UserDTO GetUserByDisplayName(string Dname);
 
         [OperationContract]
         List<UserDTO>GetAllUsers();
@@ -30,6 +38,9 @@ namespace WcfService
         string DeleteUser(int id);
         [OperationContract]
         string UpdateUser(UserDTO userDto);
+
+        [OperationContract]
+        UserDTO TryLogin(string username,string password);
 
         //Friends methods
 
