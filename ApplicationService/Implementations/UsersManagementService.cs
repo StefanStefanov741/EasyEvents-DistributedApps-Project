@@ -33,6 +33,18 @@ namespace ApplicationService.Implementations
             return users;
         }
 
+        public UserDTO GetById(int id)
+        {
+            User user = ctx.Users.Where(u => u.Id == id).FirstOrDefault();
+            return UserToDto(user);
+        }
+
+        public UserDTO GetByUsername(string username)
+        {
+            User user = ctx.Users.Where(u => u.username == username).FirstOrDefault();
+            return UserToDto(user);
+        }
+
         public bool Save(UserDTO userDTO) {
             User user = new User {
                 username = userDTO.username,
@@ -178,7 +190,7 @@ namespace ApplicationService.Implementations
                 Id = user.Id,
                 username = user.username,
                 password = user.password,
-                displayName = user.password,
+                displayName = user.displayName,
                 email = user.email,
                 phone_number = user.email,
                 bio = user.bio,

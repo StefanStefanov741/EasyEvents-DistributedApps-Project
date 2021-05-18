@@ -23,5 +23,11 @@ namespace ApplicationService.DTOs
         public List<int> friendsIDS { get; set; }
         public List<int> hosted_eventsIDS { get; set; }
         public List<int> visited_eventsIDS { get; set; }
+
+        public bool Validate()
+        {
+            return (!String.IsNullOrEmpty(username) && !String.IsNullOrEmpty(password) && !String.IsNullOrEmpty(displayName) &&
+                !String.IsNullOrEmpty(email));
+        }
     }
 }

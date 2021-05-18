@@ -60,12 +60,14 @@ namespace MVC.Controllers
 
         public ActionResult Login()
         {
+            ViewData["loggedin"] = false;
             return View();
         }
 
         [HttpPost]
         public ActionResult Login(LoginVM model)
         {
+            ViewData["loggedin"] = false;
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -79,6 +81,7 @@ namespace MVC.Controllers
                 }
             }
             //log in the user
+            
             return RedirectToAction("Index", "Home");
         }
 

@@ -129,6 +129,7 @@
     </Compile>
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -200,6 +201,8 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\User\Register.cshtml" />
     <Content Include="Views\User\Login.cshtml" />
+    <Content Include="Views\Users\Register.cshtml" />
+    <Content Include="Views\Users\Login.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -223,9 +226,17 @@
       <Project>{956F212B-3B5E-4451-9180-8AE368E07A4F}</Project>
       <Name>ApplicationService</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Data\Data.csproj">
+      <Project>{a939cc74-0fd3-49a9-bb21-064f285eb6b3}</Project>
+      <Name>Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WcfService\WcfService.csproj">
       <Project>{a5171cb4-79da-42d1-adf3-aaddcc3570ab}</Project>
       <Name>WcfService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebAPI\WebAPI.csproj">
+      <Project>{0D635A97-8FC3-44A4-8477-39D8A89468F0}</Project>
+      <Name>WebAPI</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
