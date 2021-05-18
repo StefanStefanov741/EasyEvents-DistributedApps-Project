@@ -2,6 +2,7 @@
 using MVC.ViewModels;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -81,7 +82,17 @@ namespace MVC.Controllers
                             client.DefaultRequestHeaders.Accept.Clear();
                             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                            var content = JsonConvert.SerializeObject(model);
+                            UserDTO toRegister = new UserDTO()
+                            {
+                                username = model.username,
+                                password = model.password,
+                                displayName = model.displayName,
+                                email = model.email,
+                                birthday = model.birthday,
+                                gender = model.gender
+                            };
+
+                            var content = JsonConvert.SerializeObject(toRegister);
                             var buffer = System.Text.Encoding.UTF8.GetBytes(content);
                             var byteContent = new ByteArrayContent(buffer);
                             byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");

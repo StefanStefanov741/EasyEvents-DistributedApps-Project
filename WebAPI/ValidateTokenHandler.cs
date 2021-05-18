@@ -34,13 +34,12 @@ namespace WebAPI
             if (!TryRetrieveToken(request, out token))
             {
                 statusCode = HttpStatusCode.Unauthorized;
-                //allow requests with no token - whether a action method needs an authentication can be set with the claimsauthorization attribute
                 return base.SendAsync(request, cancellationToken);
             }
 
             try
             {
-                const string sec = "401b09eab3c013d4ca54922bb802bec8fd5318192b0a75f201d8b3727429090fb337591abd3e44453b954555b7a0812e1081c39b740293f765eae731f5a65ed1";
+                const string sec = "z401b09eab3c013d4ca54922bb802bec8fd5wefgewgGHA318192b0a75f201dwegwGWGW8b3727429090fb33759fefaeH5THE1abd3e44453b954555b7a0812e1081c39b740293f765eae731f5a65ed1";
                 var now = DateTime.UtcNow;
                 var securityKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.Default.GetBytes(sec));
 
@@ -49,8 +48,8 @@ namespace WebAPI
                 JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
                 TokenValidationParameters validationParameters = new TokenValidationParameters()
                 {
-                    ValidAudience = "http://localhost:50191",
-                    ValidIssuer = "http://localhost:50191",
+                    ValidAudience = "https://localhost:44368/",
+                    ValidIssuer = "https://localhost:44368/",
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     LifetimeValidator = this.LifetimeValidator,

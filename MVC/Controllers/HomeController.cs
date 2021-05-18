@@ -24,11 +24,14 @@ namespace MVC.Controllers
                 string displayName = "";
                 ViewData["loggedin"] = true;
                 using (var client = new HttpClient()) {
+                    HttpCookie jwtCookie = HttpContext.Request.Cookies.Get("jwt");
+
                     client.BaseAddress = url;
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    //adding jw token to the request headers since the method checks for authorization
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
 
-                    HttpCookie jwtCookie = HttpContext.Request.Cookies.Get("jwt");
 
                     var content = JsonConvert.SerializeObject(jwtCookie);
                     var buffer = System.Text.Encoding.UTF8.GetBytes(content);
@@ -38,7 +41,14 @@ namespace MVC.Controllers
                     HttpResponseMessage response = await client.PostAsync("userfromtoken", byteContent);
                     string jsonString = await response.Content.ReadAsStringAsync();
                     var LoginResponseData = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
-                    string username = LoginResponseData.Body.ToString();
+                    string username = "";
+                    try
+                    {
+                        username = LoginResponseData.Body.ToString();
+                    }
+                    catch { 
+                        //someone tampered with the token
+                    }
                     if (username != "")
                     {
                         HttpResponseMessage displayNresponse = await client.GetAsync("getbyusername/" + username);

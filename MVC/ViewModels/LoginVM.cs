@@ -14,6 +14,7 @@ namespace MVC.ViewModels
         [Display(Name = "Username")]
         public string username { get; set; }
         [Required]
+        [DataType(DataType.Password)]
         [StringLength(16)]
         [Display(Name = "Password")]
         public string password { get; set; }

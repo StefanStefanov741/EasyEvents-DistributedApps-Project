@@ -1,6 +1,8 @@
 ﻿using ApplicationService.DTOs;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
 
 namespace MVC.ViewModels
 {
@@ -11,6 +13,7 @@ namespace MVC.ViewModels
         [Display(Name ="Username")]
         public string username { get; set; }
         [Required]
+        [DataType(DataType.Password)]
         [StringLength(16)]
         [Display(Name = "Password")]
         public string password { get; set; }
@@ -26,16 +29,18 @@ namespace MVC.ViewModels
         [Display(Name = "Date of birth")]
         [DataType(DataType.Date)]
         public DateTime? birthday { get; set; }
+
         [Required]
-        [Display(Name = "Gender")]
+        [Display(Name = "Male")]
         public bool gender { get; set; }
-        public RegisterVM() { }
+
+        public RegisterVM() {}
         public RegisterVM(UserDTO userDto) {
+
             username = userDto.username;
             password = userDto.password;
             displayName = userDto.displayName;
             email = userDto.email;
-            gender = userDto.gender;
         }
     }
 }
