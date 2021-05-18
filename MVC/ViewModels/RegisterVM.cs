@@ -31,7 +31,7 @@ namespace MVC.ViewModels
         public DateTime? birthday { get; set; }
 
         [Required]
-        [Display(Name = "Male")]
+        [Display(Name = "Gender")]
         public bool gender { get; set; }
 
         public RegisterVM() {}

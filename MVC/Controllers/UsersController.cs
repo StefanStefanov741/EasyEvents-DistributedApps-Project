@@ -26,6 +26,14 @@ namespace MVC.Controllers
         public async Task<ActionResult> Register (RegisterVM model)
         {
             ViewData["loggedin"] = false;
+            var genderValue = Request["GenderSelect"];
+            if (genderValue == "Male")
+            {
+                model.gender = true;
+            }
+            else {
+                model.gender = false;
+            }
             if (ModelState.IsValid)
             {
                 bool allowed = true;

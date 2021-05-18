@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - My ASP.NET Application</title>
     @Styles.Render("~/Content/css")
+    @Styles.Render("~/Content/myStyles.css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
@@ -30,7 +31,7 @@
                     }
                     else
                     {
-                        <li class="nav-item">@Html.ActionLink((string)ViewData["DisplayName"], "Index", "Home")</li>
+                        <li class="nav-item">@Html.ActionLink((string)ViewData["DisplayName"], "Index", "Home", new { @class = "divider" })</li>
                         <li class="nav-item">@Html.ActionLink("Logout", "Logout", "Users")</li>
                     }
                 </ul>

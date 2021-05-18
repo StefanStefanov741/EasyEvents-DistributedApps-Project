@@ -58,10 +58,10 @@
     <div class="form-group">
         @Html.LabelFor(model => model.gender, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            <div class="checkbox">
-                @Html.EditorFor(model => model.gender)
-                @Html.ValidationMessageFor(model => model.gender, "", new { @class = "text-danger" })
-            </div>
+            <select id="GenderSelect" name="GenderSelect">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
         </div>
     </div>
 
