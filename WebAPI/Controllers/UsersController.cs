@@ -34,7 +34,7 @@ namespace WebAPI.Controllers
         {
             return Json(_service.GetById(id));
         }
-
+        [Authorize]
         [HttpGet]
         [Route("getbyusername/{username}")]
         public IHttpActionResult GetByUsername(string username)
@@ -89,68 +89,44 @@ namespace WebAPI.Controllers
             return Json(response);
         }
 
-        [HttpGet]
-        [Route("findbyusername/{username}")]
-        public IHttpActionResult FindByUsername(string username)
+        [HttpPost]
+        [Route("findexistinguser")]
+        public IHttpActionResult FindExistingUser(UserDTO userDTO)
         {
-            string real_username = username.Replace("4242424242424242", ".");
             ResponseMessage response = new ResponseMessage();
-            if (_service.FindUserByUsername(real_username) != null)
+
+            UserDTO u1 = _service.FindUserByUsername(userDTO.username);
+            UserDTO u2 = _service.FindUserByDisplayName(userDTO.displayName);
+            UserDTO u3 = _service.FindUserByEmail(userDTO.email);
+            response.Code = 404;
+
+            if (u2 != null)
             {
                 response.Code = 200;
-                response.Body = "User exists.";
+                response.Body = "Displayname exists!";
             }
-            else {
-                response.Code = 404;
-                response.Body = "User doesn't exist.";
+            if (u1 != null) {
+                response.Code = 200;
+                response.Body+= "Username exists!";
             }
+            if (u3 != null)
+            {
+                response.Code = 200;
+                response.Body+= "Email exists!";
+            }
+            if (u1 == null && u2 == null && u3 == null) {
+                response.Body = "User not found!";
+            }
+
             return Json(response);
         }
 
-        [HttpGet]
-        [Route("findbyemail/{email}")]
-        public IHttpActionResult FindByEmail(string email)
-        {
-            string real_email = email.Replace("4242424242424242", ".");
-            ResponseMessage response = new ResponseMessage();
-            if (_service.FindUserByEmail(real_email) != null)
-            {
-                response.Code = 200;
-                response.Body = "User exists.";
-            }
-            else
-            {
-                response.Code = 404;
-                response.Body = "User doesn't exist.";
-            }
-            return Json(response);
-        }
-
-        [HttpGet]
-        [Route("findbydispn/{dispN}")]
-        public IHttpActionResult FindByDisplayName(string dispN)
-        {
-            string real_dispN = dispN.Replace("4242424242424242", ".");
-            ResponseMessage response = new ResponseMessage();
-            if (_service.FindUserByDisplayName(real_dispN) != null)
-            {
-                response.Code = 200;
-                response.Body = "User exists.";
-            }
-            else
-            {
-                response.Code = 404;
-                response.Body = "User doesn't exist.";
-            }
-            return Json(response);
-        }
-
-        [HttpGet]
-        [Route("trylogin/{username}/{password}")]
-        public IHttpActionResult TryLogin(string username,string password)
+        [HttpPost]
+        [Route("trylogin")]
+        public IHttpActionResult TryLogin(UserDTO user_info)
         {
             ResponseMessage response = new ResponseMessage();
-            UserDTO user = _service.TryLoginUser(username, password);
+            UserDTO user = _service.TryLoginUser(user_info.username, user_info.password);
             if (user != null)
             {
                 response.Code = 200;
@@ -165,13 +141,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        [Route("auth/{username}/{password}")]
-        public IHttpActionResult Authenticate(string username,string password)
+        [Route("auth")]
+        public IHttpActionResult Authenticate(UserDTO u)
         {
             var userResponse = new UserResponse { };
             UserRequest userRequest = new UserRequest { };
-            userRequest.Username = username;
-            userRequest.Password = password;
+            userRequest.Username = u.username;
+            userRequest.Password = u.password;
 
             string token = createToken(userRequest);
 
@@ -226,6 +202,27 @@ namespace WebAPI.Controllers
             ResponseMessage rm = new ResponseMessage();
             rm.Code = 201;
             rm.Body = claims.ToString();
+            return Json(rm);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("updateuser")]
+        public IHttpActionResult UpdateUserInfo(UserDTO user_info)
+        {
+            UserDTO user = _service.GetById(user_info.Id);
+            user.username = user_info.username;
+            user.password = user_info.password;
+            user.email = user_info.email;
+            user.displayName = user_info.displayName;
+            user.phone_number = user_info.phone_number;
+            user.bio = user_info.bio;
+            user.gender = user_info.gender;
+            user.socialLink = user_info.socialLink;
+            _service.Update(user);
+            ResponseMessage rm = new ResponseMessage();
+            rm.Code = 200;
+            rm.Body = "Update complete.";
             return Json(rm);
         }
 

@@ -1,19 +1,21 @@
-﻿@model MVC.ViewModels.RegisterVM
+﻿@model MVC.ViewModels.ProfileVM
 
 @{
-    ViewBag.Title = "Register";
+    ViewBag.Title = "Profile";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Register</h2>
+<h2>Profile</h2>
 
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
     
 <div class="form-horizontal">
+    <h4>settings</h4>
     <hr />
+    @Html.HiddenFor(model => model.id, Model.id)
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <div class="form-group">
         @Html.LabelFor(model => model.username, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -48,10 +50,26 @@
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.birthday, htmlAttributes: new { @class = "control-label col-md-2" })
+        @Html.LabelFor(model => model.phone_number, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @Html.EditorFor(model => model.birthday, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.birthday, "", new { @class = "text-danger" })
+            @Html.EditorFor(model => model.phone_number, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.phone_number, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.bio, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.bio, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.bio, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.socialLink, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.socialLink, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.socialLink, "", new { @class = "text-danger" })
         </div>
     </div>
 
@@ -59,39 +77,29 @@
         @Html.LabelFor(model => model.gender, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             <select id="GenderSelect" name="GenderSelect">
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
+                @if (Model.gender)
+                {
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                }
+                else
+                {
+                    <option value="Female">Female</option>
+                    <option value="Male">Male</option>
+                }
             </select>
         </div>
     </div>
 
     <div class="form-group">
-        <div class="col-md-10">
-            <div>
-                @Html.ValidationMessage("RegistrationError1", null, new { @class = "text-danger" })
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-10">
-            <div>
-                @Html.ValidationMessage("RegistrationError2", null, new { @class = "text-danger" })
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-10">
-            <div>
-                @Html.ValidationMessage("RegistrationError3", null, new { @class = "text-danger" })
-            </div>
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Save" class="btn btn-default" />
+            <form action="~/Views/Home/Index.cshtml">
+                <input type="submit" value="Back" class="btn btn-default col-lg-offset-1"/>
+            </form>
         </div>
     </div>
 
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Create" class="btn btn-default" />
-        </div>
-    </div>
 </div>
 }
 

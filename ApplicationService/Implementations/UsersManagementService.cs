@@ -142,15 +142,18 @@ namespace ApplicationService.Implementations
                 User user = ctx.Users.Where(u => u.email == email).FirstOrDefault();
                 if (user != null)
                 {
+                    int i = 0;
                     return UserToDto(user);
                 }
                 else
                 {
+                    int i = 0;
                     return null;
                 }
             }
             catch
             {
+                int i = 0;
                 return null;
             }
         }
@@ -192,7 +195,7 @@ namespace ApplicationService.Implementations
                 password = user.password,
                 displayName = user.displayName,
                 email = user.email,
-                phone_number = user.email,
+                phone_number = user.phone_number,
                 bio = user.bio,
                 socialLink = user.socialLink,
                 rating = user.rating,

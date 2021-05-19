@@ -46,8 +46,13 @@ namespace MVC.Controllers
                     {
                         username = LoginResponseData.Body.ToString();
                     }
-                    catch { 
+                    catch {
                         //someone tampered with the token
+                        ViewData["loggedin"] = false;
+                        HttpCookie oldCookie = new HttpCookie("jwt");
+                        oldCookie.Expires = DateTime.Now.AddDays(-1d);
+                        Response.Cookies.Add(oldCookie);
+                        return View();
                     }
                     if (username != "")
                     {
