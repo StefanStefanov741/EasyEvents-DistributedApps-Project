@@ -53,9 +53,13 @@
   <ItemGroup>
     <Compile Include="DTOs\EventDTO.cs" />
     <Compile Include="DTOs\FriendshipDTO.cs" />
+    <Compile Include="DTOs\HostToEventDTO.cs" />
+    <Compile Include="DTOs\ParticipantToEventDTO.cs" />
     <Compile Include="DTOs\UserDTO.cs" />
     <Compile Include="Implementations\EventsManagementService.cs" />
     <Compile Include="Implementations\FriendshipsManagementService.cs" />
+    <Compile Include="Implementations\ParticipantToEventManagementService.cs" />
+    <Compile Include="Implementations\HostToEventManagementService.cs" />
     <Compile Include="Implementations\UsersManagementService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

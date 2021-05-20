@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Data.Entities
 {
@@ -31,8 +27,5 @@ namespace Data.Entities
         public DateTime? birthday { get; set; }
         [Required]
         public bool gender { get; set; }
-        public List<int> friendsIDS { get; set; }
-        public List<int> hosted_eventsIDS { get; set; }
-        public List<int> visited_eventsIDS { get; set; }
     }
 }

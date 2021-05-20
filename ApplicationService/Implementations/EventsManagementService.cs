@@ -27,12 +27,30 @@ namespace ApplicationService.Implementations
                     likes=item.likes,
                     createdOn=item.createdOn,
                     begins=item.begins,
+                    ends = item.ends,
                     ended=item.ended,
-                    participantsIDS=item.participantsIDS
+                    participants=item.participants
                 });
             }
 
             return events;
+        }
+
+        public object GetById(int id)
+        {
+            Event ev = ctx.Events.Where(e => e.Id == id).FirstOrDefault();
+            return EventToDto(ev);
+        }
+
+        public int GiveID(EventDTO ev) {
+            int id = 0;
+            foreach (var item in ctx.Events.ToList())
+            {
+                if (item.host_id == ev.host_id && item.title == ev.title && item.location == ev.location) {
+                    id = item.Id;
+                }
+            }
+            return id;
         }
 
         public bool Save(EventDTO eventDTO)
@@ -46,8 +64,9 @@ namespace ApplicationService.Implementations
                 likes = eventDTO.likes,
                 createdOn = eventDTO.createdOn,
                 begins = eventDTO.begins,
+                ends = eventDTO.ends,
                 ended = eventDTO.ended,
-                participantsIDS = eventDTO.participantsIDS
+                participants = eventDTO.participants
             };
 
             try
@@ -74,8 +93,9 @@ namespace ApplicationService.Implementations
                 toUpdate.likes = evenyDTO.likes;
                 toUpdate.createdOn = evenyDTO.createdOn;
                 toUpdate.begins = evenyDTO.begins;
+                toUpdate.ends = evenyDTO.ends;
                 toUpdate.ended = evenyDTO.ended;
-                toUpdate.participantsIDS = evenyDTO.participantsIDS;
+                toUpdate.participants = evenyDTO.participants;
             }
             try
             {
@@ -102,5 +122,29 @@ namespace ApplicationService.Implementations
                 return false;
             }
         }
+
+        public EventDTO EventToDto(Event ev)
+        {
+            if (ev == null)
+            {
+                return null;
+            }
+            EventDTO eDto = new EventDTO
+            {
+                Id = ev.Id,
+                title = ev.title,
+                description = ev.description,
+                location = ev.location,
+                host_id = ev.host_id,
+                likes = ev.likes,
+                createdOn = ev.createdOn,
+                begins = ev.begins,
+                ends = ev.ends,
+                ended = ev.ended,
+                participants = ev.participants
+            };
+            return eDto;
+        }
+
     }
 }

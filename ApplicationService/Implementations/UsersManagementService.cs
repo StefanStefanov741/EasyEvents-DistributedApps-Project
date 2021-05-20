@@ -24,9 +24,6 @@ namespace ApplicationService.Implementations
                     rating = item.rating,
                     birthday = item.birthday,
                     gender = item.gender,
-                    friendsIDS = item.friendsIDS,
-                    hosted_eventsIDS = item.hosted_eventsIDS,
-                    visited_eventsIDS = item.visited_eventsIDS
                 });
             }
 
@@ -57,9 +54,6 @@ namespace ApplicationService.Implementations
                 rating = userDTO.rating,
                 birthday = userDTO.birthday,
                 gender = userDTO.gender,
-                friendsIDS = userDTO.friendsIDS,
-                hosted_eventsIDS = userDTO.hosted_eventsIDS,
-                visited_eventsIDS = userDTO.visited_eventsIDS
             };
 
             try
@@ -87,9 +81,6 @@ namespace ApplicationService.Implementations
                 toUpdate.rating = userDTO.rating;
                 toUpdate.birthday = userDTO.birthday;
                 toUpdate.gender = userDTO.gender;
-                toUpdate.friendsIDS = userDTO.friendsIDS;
-                toUpdate.hosted_eventsIDS = userDTO.hosted_eventsIDS;
-                toUpdate.visited_eventsIDS = userDTO.visited_eventsIDS;
             }
             try
             {
@@ -201,9 +192,6 @@ namespace ApplicationService.Implementations
                 rating = user.rating,
                 birthday = user.birthday,
                 gender = user.gender,
-                friendsIDS = user.friendsIDS,
-                hosted_eventsIDS = user.hosted_eventsIDS,
-                visited_eventsIDS = user.visited_eventsIDS
             };
             return uDto;
         }

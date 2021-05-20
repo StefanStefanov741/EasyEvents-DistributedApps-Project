@@ -22,24 +22,27 @@ namespace WebAPI.Controllers
             _service = new UsersManagementService();
         }
 
+        [Authorize]
         [HttpGet]
         [Route("all")]
         public IHttpActionResult GetAllUsers() {
             return Json(_service.GetAll());
         }
 
+        [Authorize]
         [HttpGet]
         [Route("getbyid/{id}")]
         public IHttpActionResult GetById(int id)
         {
             return Json(_service.GetById(id));
         }
+
         [Authorize]
-        [HttpGet]
-        [Route("getbyusername/{username}")]
-        public IHttpActionResult GetByUsername(string username)
+        [HttpPost]
+        [Route("getbyusername")]
+        public IHttpActionResult GetByUsername(UserDTO username)
         {
-            return Json(_service.GetByUsername(username));
+            return Json(_service.GetByUsername(username.username));
         }
 
         [HttpPost]
@@ -69,6 +72,7 @@ namespace WebAPI.Controllers
             return Json(response);
         }
 
+        [Authorize]
         [HttpDelete]
         [Route("{id}")]
         public IHttpActionResult Delete(int id)

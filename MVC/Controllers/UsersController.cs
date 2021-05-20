@@ -229,7 +229,12 @@ namespace MVC.Controllers
                     }
                     if (username != "")
                     {
-                        HttpResponseMessage user_response = await client.GetAsync("getbyusername/" + username);
+                        UserDTO u = new UserDTO() { username = username };
+                        var content2 = JsonConvert.SerializeObject(u);
+                        var buffer2 = System.Text.Encoding.UTF8.GetBytes(content2);
+                        var byteContent2 = new ByteArrayContent(buffer2);
+                        byteContent2.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                        HttpResponseMessage user_response = await client.PostAsync("getbyusername", byteContent2);
                         var User_jsonString = await user_response.Content.ReadAsStringAsync();
                         var UserResoponseData = JsonConvert.DeserializeObject<UserDTO>(User_jsonString);
                         user = UserResoponseData;

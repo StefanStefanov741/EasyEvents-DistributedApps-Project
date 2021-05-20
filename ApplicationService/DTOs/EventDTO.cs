@@ -16,7 +16,14 @@ namespace ApplicationService.DTOs
         public int likes { get; set; }
         public DateTime createdOn { get; set; }
         public DateTime begins { get; set; }
+        public DateTime ends { get; set; }
         public bool ended { get; set; }
-        public List<int> participantsIDS { get; set; }
+        public int participants { get; set; }
+
+        public bool Validate()
+        {
+            return (!String.IsNullOrEmpty(title) && !String.IsNullOrEmpty(description) && !String.IsNullOrEmpty(location) &&
+                host_id!=0 && begins!=null);
+        }
     }
 }

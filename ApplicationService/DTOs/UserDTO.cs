@@ -20,9 +20,6 @@ namespace ApplicationService.DTOs
         public float rating { get; set; }
         public DateTime? birthday { get; set; }
         public bool gender { get; set; }
-        public List<int> friendsIDS { get; set; }
-        public List<int> hosted_eventsIDS { get; set; }
-        public List<int> visited_eventsIDS { get; set; }
 
         public bool Validate()
         {

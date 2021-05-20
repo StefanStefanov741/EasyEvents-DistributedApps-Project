@@ -22,9 +22,12 @@ namespace Data.Entities
         public int host_id { get; set; }
         public int likes { get; set; }
         public DateTime createdOn { get; set; }
+        [Required]
         public DateTime begins { get; set; }
         [Required]
+        public DateTime ends { get; set; }
+        [Required]
         public bool ended { get; set; }
-        public List<int> participantsIDS { get; set; }
+        public int participants { get; set; }
     }
 }

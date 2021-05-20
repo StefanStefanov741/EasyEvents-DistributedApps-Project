@@ -22,7 +22,7 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav ml-auto">
                     <li class="nav-item">@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li class="nav-item">@Html.ActionLink("Events", "Index", "Home")</li>
+                    <li class="nav-item">@Html.ActionLink("Events", "Index", "Events")</li>
                     @if ((bool)ViewData["loggedin"])
                     {
                          <li class="nav-item">@Html.ActionLink("Friends", "Index", "Home")</li>

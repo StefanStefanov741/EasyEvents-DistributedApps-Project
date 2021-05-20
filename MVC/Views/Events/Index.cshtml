@@ -1,0 +1,82 @@
+﻿@model IEnumerable<MVC.ViewModels.EventListVM>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    int count = 0;
+    foreach (var item in Model)
+    {
+        count++;
+    }
+}
+
+<h2>All Events   (@count)</h2>
+
+<p>
+    @Html.ActionLink("Create new event", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.location)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.begins)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ends)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ended)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.likes)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.participants)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.location)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.begins)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ends)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ended)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.likes)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.participants)
+            </td>
+            <td>
+                @Html.ActionLink("Like", "Like", new { id = item.id })
+            </td>
+            <td>
+                @Html.ActionLink("View", "View", new { id = item.id })
+            </td>
+            <td>
+                @Html.ActionLink("Share", "Share", new { id = item.id })
+            </td>
+        </tr>
+    }
+
+</table>

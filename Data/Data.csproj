@@ -55,18 +55,16 @@
     <Compile Include="Entities\BaseEntity.cs" />
     <Compile Include="Entities\Event.cs" />
     <Compile Include="Entities\Friendship.cs" />
+    <Compile Include="Entities\HostToEvent.cs" />
+    <Compile Include="Entities\ParticipantToEvent.cs" />
     <Compile Include="Entities\User.cs" />
-    <Compile Include="Migrations\202105131208107_InitialCreate.cs" />
-    <Compile Include="Migrations\202105131208107_InitialCreate.designer.cs">
-      <DependentUpon>202105131208107_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\202105201748128_InitialMigrationAfterWipe.cs" />
+    <Compile Include="Migrations\202105201748128_InitialMigrationAfterWipe.designer.cs">
+      <DependentUpon>202105201748128_InitialMigrationAfterWipe.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202105131318284_InitialMigration.cs" />
-    <Compile Include="Migrations\202105131318284_InitialMigration.designer.cs">
-      <DependentUpon>202105131318284_InitialMigration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202105141237168_UserBirthdayEdit.cs" />
-    <Compile Include="Migrations\202105141237168_UserBirthdayEdit.designer.cs">
-      <DependentUpon>202105141237168_UserBirthdayEdit.cs</DependentUpon>
+    <Compile Include="Migrations\202105201817233_ConnectionsUpdateGetSet.cs" />
+    <Compile Include="Migrations\202105201817233_ConnectionsUpdateGetSet.designer.cs">
+      <DependentUpon>202105201817233_ConnectionsUpdateGetSet.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -76,14 +74,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202105131208107_InitialCreate.resx">
-      <DependentUpon>202105131208107_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202105201748128_InitialMigrationAfterWipe.resx">
+      <DependentUpon>202105201748128_InitialMigrationAfterWipe.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202105131318284_InitialMigration.resx">
-      <DependentUpon>202105131318284_InitialMigration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202105141237168_UserBirthdayEdit.resx">
-      <DependentUpon>202105141237168_UserBirthdayEdit.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202105201817233_ConnectionsUpdateGetSet.resx">
+      <DependentUpon>202105201817233_ConnectionsUpdateGetSet.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

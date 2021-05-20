@@ -56,7 +56,12 @@ namespace MVC.Controllers
                     }
                     if (username != "")
                     {
-                        HttpResponseMessage displayNresponse = await client.GetAsync("getbyusername/" + username);
+                        UserDTO u = new UserDTO() { username = username };
+                        var content2 = JsonConvert.SerializeObject(u);
+                        var buffer2 = System.Text.Encoding.UTF8.GetBytes(content2);
+                        var byteContent2 = new ByteArrayContent(buffer2);
+                        byteContent2.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                        HttpResponseMessage displayNresponse = await client.PostAsync("getbyusername", byteContent2);
                         string jsonStringDname = await displayNresponse.Content.ReadAsStringAsync();
                         var DnameData = JsonConvert.DeserializeObject<UserDTO>(jsonStringDname);
                         ViewData["DisplayName"] = DnameData.displayName;
