@@ -1,0 +1,104 @@
+﻿@model MVC.ViewModels.EventDetailsVM
+
+@{
+    ViewBag.Title = "ViewDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2> @Html.DisplayFor(model => model.title)</h2>
+
+<div>
+    <h4>Details</h4>
+    <hr />
+    <dl class="dl-horizontal">
+
+        <dt>
+            @Html.DisplayNameFor(model => model.location)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.location)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.host_name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.host_name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.createdOn)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.createdOn)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.begins)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.begins)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ends)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ends)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.participants)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.participants)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.friendsgoing)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.friendsgoing)
+        </dd>
+
+    </dl>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            @if (!Model.hosting)
+            {
+                if (!Model.joined)
+                {
+                    <a href='https://localhost:44383/Events/JoinEvent?id=@Model.id' class="btn btn-default col-lg-offset-1">Join</a>
+                }
+                else
+                {
+                    <a href='https://localhost:44383/Events/LeaveEvent?id=@Model.id' class="btn btn-default col-lg-offset-1">Leave</a>
+                }
+
+
+
+            }
+            else { 
+                 <a href='https://localhost:44383/Events/EditEvent?id=@Model.id' class="btn btn-default col-lg-offset-1">Edit</a>
+            }
+            <a href='https://localhost:44383/Events' class="btn btn-default col-lg-offset-1">Back</a>
+        </div>
+    </div>
+
+</div>

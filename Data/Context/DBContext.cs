@@ -10,5 +10,6 @@ namespace Data.Context
         public DbSet<Event> Events { get; set; }
         public DbSet<HostToEvent> HostToEvents { get; set; }
         public DbSet<ParticipantToEvent> ParticipantsToEvents { get; set; }
+        public DbSet<Like> Likes { get; set; }
     }
 }

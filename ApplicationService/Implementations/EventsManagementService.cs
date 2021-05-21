@@ -108,6 +108,78 @@ namespace ApplicationService.Implementations
             }
         }
 
+        public bool Like(int id)
+        {
+            Event toLike = ctx.Events.Find(id);
+            if (toLike != null)
+            {
+                toLike.likes++;
+            }
+            try
+            {
+                ctx.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool Dislike(int id)
+        {
+            Event toDislike = ctx.Events.Find(id);
+            if (toDislike != null)
+            {
+                toDislike.likes--;
+            }
+            try
+            {
+                ctx.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool Join(int id)
+        {
+            Event toJoin = ctx.Events.Find(id);
+            if (toJoin != null)
+            {
+                toJoin.participants++;
+            }
+            try
+            {
+                ctx.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool Leave(int id)
+        {
+            Event toLeave = ctx.Events.Find(id);
+            if (toLeave != null)
+            {
+                toLeave.participants--;
+            }
+            try
+            {
+                ctx.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public bool Delete(int id)
         {
             try

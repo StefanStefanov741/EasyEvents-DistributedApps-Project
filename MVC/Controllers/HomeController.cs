@@ -40,11 +40,11 @@ namespace MVC.Controllers
 
                     HttpResponseMessage response = await client.PostAsync("userfromtoken", byteContent);
                     string jsonString = await response.Content.ReadAsStringAsync();
-                    var LoginResponseData = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    var LoginResponseData = JsonConvert.DeserializeObject<UserDTO>(jsonString);
                     string username = "";
                     try
                     {
-                        username = LoginResponseData.Body.ToString();
+                        username = LoginResponseData.username;
                     }
                     catch {
                         //someone tampered with the token

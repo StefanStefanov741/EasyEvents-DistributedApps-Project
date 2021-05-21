@@ -1,0 +1,93 @@
+﻿@model MVC.ViewModels.EventVM
+
+@{
+    ViewBag.Title = "EditEvent";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h2>Edit event</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <h4>information</h4>
+    <hr />
+    @Html.HiddenFor(model => model.participants, Model.participants)
+    @Html.HiddenFor(model => model.host_id, Model.host_id)
+    @Html.HiddenFor(model => model.id, Model.id)
+    @Html.HiddenFor(model => model.createdOn, Model.createdOn)
+    @Html.HiddenFor(model => model.likes, Model.likes)
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(model => model.title, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.title, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.title, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.description, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.description, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.description, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.location, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.location, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.location, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.begins_date, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.begins_date, new { htmlAttributes = new { @class = "form-control"} })
+            @Html.ValidationMessageFor(model => model.begins_date, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.begins_time, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.begins_time, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.begins_time, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ends_date, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ends_date, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ends_date, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ends_time, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.ends_time, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.ends_time, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Save" class="btn btn-default green" />
+            <a href='https://localhost:44383/Events/ViewDetails?id=@Model.id' class="btn btn-default col-lg-offset-1">Back</a>
+            <a href='https://localhost:44383/Events/Delete?id=@Model.id' class="btn btn-default col-lg-offset-1 red">Delete</a>
+        </div>
+    </div>
+</div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

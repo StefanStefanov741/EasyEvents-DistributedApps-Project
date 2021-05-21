@@ -84,5 +84,112 @@ namespace WebAPI.Controllers
             return Json(response);
         }
 
+        [Authorize]
+        [HttpPost]
+        [Route("updateevent")]
+        public IHttpActionResult UpdateEventInfo(EventDTO event_info)
+        {
+            _service.Update(event_info);
+            ResponseMessage rm = new ResponseMessage();
+            rm.Code = 200;
+            rm.Body = "Update complete.";
+            return Json(rm);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("like")]
+        public IHttpActionResult Like(LikeDTO like)
+        {
+            ResponseMessage response = new ResponseMessage();
+            if (like.Validate() == false) {
+                response.Code = 400;
+                response.Body = "Event has not been liked.";
+            }
+            if (_service.Like(like.Event_id))
+            {
+                response.Code = 201;
+                response.Body = "Event has been liked.";
+            }
+            else
+            {
+                response.Code = 200;
+                response.Body = "Event has not been liked.";
+            }
+
+            return Json(response);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("dislike")]
+        public IHttpActionResult Dislike(EventDTO ev)
+        {
+            ResponseMessage response = new ResponseMessage();
+            if (ev.Id == 0) {
+                response.Code = 400;
+                response.Body = "Event has not been disliked.";
+                return Json(response);
+            }
+            if (_service.Dislike(ev.Id))
+            {
+                response.Code = 201;
+                response.Body = "Event has been disliked.";
+            }
+            else
+            {
+                response.Code = 200;
+                response.Body = "Event has not been disliked.";
+            }
+
+            return Json(response);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("joinevent")]
+        public IHttpActionResult Join(ParticipantToEventDTO pte)
+        {
+            ResponseMessage response = new ResponseMessage();
+            if (pte.Validate() == false)
+            {
+                response.Code = 400;
+                response.Body = "Event has not been liked.";
+            }
+            if (_service.Join(pte.Event_id))
+            {
+                response.Code = 201;
+                response.Body = "Event has been liked.";
+            }
+            else
+            {
+                response.Code = 200;
+                response.Body = "Event has not been liked.";
+            }
+
+            return Json(response);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("leaveevent")]
+        public IHttpActionResult Leave(EventDTO ev)
+        {
+            ResponseMessage response = new ResponseMessage();
+
+            if (_service.Leave(ev.Id))
+            {
+                response.Code = 201;
+                response.Body = "Event has been liked.";
+            }
+            else
+            {
+                response.Code = 200;
+                response.Body = "Event has not been liked.";
+            }
+
+            return Json(response);
+        }
+
     }
 }

@@ -55,6 +55,7 @@
     <Compile Include="Entities\BaseEntity.cs" />
     <Compile Include="Entities\Event.cs" />
     <Compile Include="Entities\Friendship.cs" />
+    <Compile Include="Entities\Like.cs" />
     <Compile Include="Entities\HostToEvent.cs" />
     <Compile Include="Entities\ParticipantToEvent.cs" />
     <Compile Include="Entities\User.cs" />
@@ -65,6 +66,10 @@
     <Compile Include="Migrations\202105201817233_ConnectionsUpdateGetSet.cs" />
     <Compile Include="Migrations\202105201817233_ConnectionsUpdateGetSet.designer.cs">
       <DependentUpon>202105201817233_ConnectionsUpdateGetSet.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202105211122296_Likes.cs" />
+    <Compile Include="Migrations\202105211122296_Likes.designer.cs">
+      <DependentUpon>202105211122296_Likes.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -79,6 +84,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202105201817233_ConnectionsUpdateGetSet.resx">
       <DependentUpon>202105201817233_ConnectionsUpdateGetSet.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202105211122296_Likes.resx">
+      <DependentUpon>202105211122296_Likes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

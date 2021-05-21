@@ -31,6 +31,12 @@ namespace ApplicationService.Implementations
             return friends;
         }
 
+        public object GetById(int id)
+        {
+            Friendship frnd = ctx.Friends.Where(f => f.Id == id).FirstOrDefault();
+            return FriendshipToDTO(frnd);
+        }
+
         public bool Save(FriendshipDTO friendsDTO)
         {
             Friendship friend = new Friendship
@@ -90,5 +96,24 @@ namespace ApplicationService.Implementations
                 return false;
             }
         }
+
+        public FriendshipDTO FriendshipToDTO(Friendship fr)
+        {
+            if (fr == null)
+            {
+                return null;
+            }
+            FriendshipDTO frDto = new FriendshipDTO
+            {
+                Id = fr.Id,
+                user1_id = fr.user1_id,
+                user2_id = fr.user2_id,
+                befriend_date = fr.befriend_date,
+                pending = fr.pending,
+                friendshipTier = fr.friendshipTier
+            };
+            return frDto;
+        }
+
     }
 }

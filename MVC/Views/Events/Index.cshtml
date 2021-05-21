@@ -67,11 +67,19 @@
             <td>
                 @Html.DisplayFor(modelItem => item.participants)
             </td>
+            @if (!item.likedByUser)
+            {
+                <td>
+                    @Html.ActionLink("Like", "Like", new { id = item.id })
+                </td>
+            }
+            else { 
+                <td>
+                    @Html.ActionLink("Dislike", "Dislike", new { id = item.id })
+                </td>
+            }
             <td>
-                @Html.ActionLink("Like", "Like", new { id = item.id })
-            </td>
-            <td>
-                @Html.ActionLink("View", "View", new { id = item.id })
+                @Html.ActionLink("View", "ViewDetails", new { id = item.id })
             </td>
             <td>
                 @Html.ActionLink("Share", "Share", new { id = item.id })

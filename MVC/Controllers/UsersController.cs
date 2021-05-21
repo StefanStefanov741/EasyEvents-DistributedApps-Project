@@ -212,11 +212,11 @@ namespace MVC.Controllers
 
                     HttpResponseMessage response = await client.PostAsync("userfromtoken", byteContent);
                     string jsonString = await response.Content.ReadAsStringAsync();
-                    var UserResponseData = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    var UserResponseData = JsonConvert.DeserializeObject<UserDTO>(jsonString);
                     string username = "";
                     try
                     {
-                        username = UserResponseData.Body.ToString();
+                        username = UserResponseData.username;
                     }
                     catch
                     {
@@ -326,11 +326,11 @@ namespace MVC.Controllers
 
                     HttpResponseMessage response = await client.PostAsync("userfromtoken", byteContent);
                     string jsonString = await response.Content.ReadAsStringAsync();
-                    var UserResponseData = JsonConvert.DeserializeObject<ResponseMessage>(jsonString);
+                    var UserResponseData = JsonConvert.DeserializeObject<UserDTO>(jsonString);
                     string username = "";
                     try
                     {
-                        username = UserResponseData.Body.ToString();
+                        username = UserResponseData.username;
                     }
                     catch
                     {
@@ -354,6 +354,142 @@ namespace MVC.Controllers
             }
         }
 
+        public async Task<ActionResult> Delete(int id) {
+            HttpCookie jwtCookie = HttpContext.Request.Cookies.Get("jwt");
+            List<int> participatedInEventsIDS = new List<int>();
+            //delete participation connections
+            using (var client = new HttpClient()) {
+                client.BaseAddress = new Uri("https://localhost:44368/api/pte/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
+
+                HttpResponseMessage response = await client.GetAsync("all");
+                string jsonString = await response.Content.ReadAsStringAsync();
+                var ptes = JsonConvert.DeserializeObject<List<ParticipantToEventDTO>>(jsonString);
+                for (int i = 0; i < ptes.Count; i++)
+                {
+                    if (ptes[i].Participant_id == id) {
+                        participatedInEventsIDS.Add(ptes[i].Event_id);
+                        await client.DeleteAsync("" + ptes[i].Id);
+                    }
+                }
+            }
+            //delete host connections
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:44368/api/hte/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
+
+                HttpResponseMessage response = await client.GetAsync("all");
+                string jsonString = await response.Content.ReadAsStringAsync();
+                var htes = JsonConvert.DeserializeObject<List<HostToEventDTO>>(jsonString);
+                for (int i = 0; i < htes.Count; i++)
+                {
+                    if (htes[i].Host_id == id)
+                    {
+                        await client.DeleteAsync("" + htes[i].Id);
+                    }
+                }
+            }
+            //delete likes
+            List<int> likedEventsIDS = new List<int>();
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:44368/api/likes/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
+
+                HttpResponseMessage response = await client.GetAsync("all");
+                string jsonString = await response.Content.ReadAsStringAsync();
+                var likes = JsonConvert.DeserializeObject<List<LikeDTO>>(jsonString);
+                for (int i = 0; i < likes.Count; i++)
+                {
+                    if (likes[i].User_id == id)
+                    {
+                        likedEventsIDS.Add(likes[i].Event_id);
+                        await client.DeleteAsync("" + likes[i].Id);
+                    }
+                }
+            }
+            //delete hosted events
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:44368/api/events/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
+
+                HttpResponseMessage response = await client.GetAsync("all");
+                string jsonString = await response.Content.ReadAsStringAsync();
+                var events = JsonConvert.DeserializeObject<List<EventDTO>>(jsonString);
+                for (int i = 0; i < events.Count; i++)
+                {
+                    if (events[i].host_id == id)
+                    {
+                        await client.DeleteAsync("" + events[i].Id);
+                    }
+                    else {
+                        //decrease likes and participations on events
+                        bool update = false;
+                        if (likedEventsIDS.Contains(events[i].Id)) {
+                            events[i].likes--;
+                            update = true;
+                        }
+                        if (participatedInEventsIDS.Contains(events[i].Id))
+                        {
+                            events[i].participants--;
+                            update = true;
+                        }
+                        if (update) {
+                            var content = JsonConvert.SerializeObject(events[i]);
+                            var buffer = System.Text.Encoding.UTF8.GetBytes(content);
+                            var byteContent = new ByteArrayContent(buffer);
+                            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                            await client.PostAsync("updateevent", byteContent);
+                        }
+                    }
+                }
+            }
+            //delete friendships
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:44368/api/friends/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
+
+                HttpResponseMessage response = await client.GetAsync("all");
+                string jsonString = await response.Content.ReadAsStringAsync();
+                var friendships = JsonConvert.DeserializeObject<List<FriendshipDTO>>(jsonString);
+                for (int i = 0; i < friendships.Count; i++)
+                {
+                    if (friendships[i].user1_id == id || friendships[i].user2_id == id)
+                    {
+                        await client.DeleteAsync("" + friendships[i].Id);
+                    }
+                }
+            }
+            //delete user
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = url;
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
+
+                await client.DeleteAsync(""+id);
+            }
+            //log out
+            HttpCookie oldCookie = new HttpCookie("jwt");
+            oldCookie.Expires = DateTime.Now.AddDays(-1d);
+            Response.Cookies.Add(oldCookie);
+            ViewData["loggedin"] = false;
+            return RedirectToAction("Index","Home");
+        }
 
     }
 }

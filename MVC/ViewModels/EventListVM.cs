@@ -26,6 +26,7 @@ namespace MVC.ViewModels
         public int likes { get; set; }
         [Display(Name = "Participants")]
         public int participants { get; set; }
+        public bool likedByUser { get; set; }
 
         public EventListVM() { }
 

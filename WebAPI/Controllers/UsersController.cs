@@ -203,10 +203,7 @@ namespace WebAPI.Controllers
             var jsonToken = handler.ReadToken(c.Value);
             var tokenS = jsonToken as JwtSecurityToken;
             var claims = tokenS.Claims.First(claim => claim.Type == "unique_name").Value;
-            ResponseMessage rm = new ResponseMessage();
-            rm.Code = 201;
-            rm.Body = claims.ToString();
-            return Json(rm);
+            return Json(_service.GetByUsername(claims.ToString()));
         }
 
         [Authorize]

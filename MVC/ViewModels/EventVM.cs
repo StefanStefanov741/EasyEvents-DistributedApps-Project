@@ -9,6 +9,7 @@ namespace MVC.ViewModels
 {
     public class EventVM
     {
+        public int id { get; set; }
         [Required]
         [StringLength(100)]
         [Display(Name = "Title")]
@@ -42,10 +43,11 @@ namespace MVC.ViewModels
         [DataType(DataType.Time)]
         public DateTime ends_time { get; set; }
         public int participants { get; set; }
-
+        public int likes { get; set; }
         public EventVM() { }
         public EventVM(EventDTO eventDto)
         {
+            id = eventDto.Id;
             title = eventDto.title;
             description = eventDto.description;
             location = eventDto.location;
@@ -56,6 +58,7 @@ namespace MVC.ViewModels
             ends_date = eventDto.ends.Date;
             ends_time = eventDto.ends;
             participants = eventDto.participants;
+            likes = eventDto.likes;
         }
     }
 }

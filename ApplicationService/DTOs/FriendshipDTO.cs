@@ -15,5 +15,10 @@ namespace ApplicationService.DTOs
         public DateTime befriend_date { get; set; }
         public bool pending { get; set; }
         public string friendshipTier { get; set; }
+
+        public bool Validate()
+        {
+            return (Id!=0 && user1_id!=0 && user2_id != 0);
+        }
     }
 }

@@ -134,6 +134,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\EventDetailsVM.cs" />
     <Compile Include="ViewModels\EventListVM.cs" />
     <Compile Include="ViewModels\EventVM.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
@@ -200,14 +201,14 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Users\Register.cshtml" />
     <Content Include="Views\Users\Login.cshtml" />
     <Content Include="Views\Users\Profile.cshtml" />
     <Content Include="Views\Events\Index.cshtml" />
     <Content Include="Views\Events\Create.cshtml" />
+    <Content Include="Views\Events\ViewDetails.cshtml" />
+    <Content Include="Views\Events\EditEvent.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
