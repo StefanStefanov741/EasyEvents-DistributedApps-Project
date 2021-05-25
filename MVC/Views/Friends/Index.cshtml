@@ -1,0 +1,62 @@
+﻿@model IEnumerable<MVC.ViewModels.FriendsVM>
+
+@{
+    ViewBag.Title = "Friends";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Friends</h2>
+
+<p>
+    @Html.ActionLink("Add new friend", "AddFriend")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.displayName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.rating)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.friendshipTier)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.displayName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.email)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.rating)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.friendshipTier)
+        </td>
+        <td>
+            @Html.ActionLink("View profile", "ViewProfile", new { id = item.Id }) |
+            @if (!item.sentpending && !item.recievedpending)
+            {
+                @Html.ActionLink("Unfriend", "Unfriend", new { id = item.Id })
+            }
+            else if (item.recievedpending && !item.sentpending)
+            {
+                @Html.ActionLink("Accept request", "AcceptRequest", new { id = item.Id })
+            }
+            else if (item.sentpending && !item.recievedpending)
+            {
+                <p>Request sent</p> 
+            }
+        </td>
+    </tr>
+}
+
+</table>

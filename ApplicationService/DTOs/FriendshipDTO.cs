@@ -18,7 +18,7 @@ namespace ApplicationService.DTOs
 
         public bool Validate()
         {
-            return (Id!=0 && user1_id!=0 && user2_id != 0);
+            return (user1_id!=0 && user2_id != 0);
         }
     }
 }

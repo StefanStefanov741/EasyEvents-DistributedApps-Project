@@ -63,6 +63,24 @@ namespace WebAPI.Controllers
         }
 
         [Authorize]
+        [HttpPost]
+        [Route("accept")]
+        public IHttpActionResult AcceptFriend(FriendshipDTO fdto) {
+            ResponseMessage response = new ResponseMessage();
+            if (_service.AcceptFriendship(fdto.user1_id,fdto.user2_id))
+            {
+                response.Code = 201;
+                response.Body = "Friendship has been saved.";
+            }
+            else
+            {
+                response.Code = 200;
+                response.Body = "Friendship has not been saved.";
+            }
+            return Json(response);
+        }
+
+        [Authorize]
         [HttpDelete]
         [Route("{id}")]
         public IHttpActionResult Delete(int id)

@@ -19,6 +19,103 @@ namespace MVC.Controllers
     {
         private readonly Uri url = new Uri("https://localhost:44368/api/users/");
 
+        public async Task<ActionResult> Index() {
+            //test if user is still logged in and authorized
+            HttpCookie jwtCookie = HttpContext.Request.Cookies.Get("jwt");
+            //check if user is logged in or not
+            UserDTO current_user = null;
+            if (jwtCookie == null)
+            {
+                ViewData["loggedin"] = false;
+                return RedirectToAction("Login","Users");
+            }
+            else
+            {
+                ViewData["loggedin"] = true;
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = url;
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
+
+                    var content = JsonConvert.SerializeObject(jwtCookie);
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(content);
+                    var byteContent = new ByteArrayContent(buffer);
+                    byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                    HttpResponseMessage response = await client.PostAsync("userfromtoken", byteContent);
+
+                    string jsonString = await response.Content.ReadAsStringAsync();
+                    current_user = JsonConvert.DeserializeObject<UserDTO>(jsonString);
+                }
+                ViewData["DisplayName"] = current_user.displayName;
+            }
+            //get all users
+            List<UsersListVM> users;
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = url;
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
+
+                HttpResponseMessage response = await client.GetAsync("all");
+
+                string jsonString = await response.Content.ReadAsStringAsync();
+                users = JsonConvert.DeserializeObject<List<UsersListVM>>(jsonString);
+            }
+            int removeCurrentUserAt = -1;
+            for (int i = 0; i < users.Count; i++)
+            {
+                if (users[i].id == current_user.Id) {
+                    removeCurrentUserAt = i;
+                }
+                if (users[i].gender == "true")
+                {
+                    users[i].gender = "Male";
+                }
+                else
+                {
+                    users[i].gender = "Female";
+                }
+                users[i].sentRequest = false;
+            }
+            if (removeCurrentUserAt < 0) {
+                return RedirectToAction("Index", "Home");
+            }
+            users.RemoveAt(removeCurrentUserAt);
+            //get all friends ids
+            List<FriendshipDTO> existing_friendships = new List<FriendshipDTO>();
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:44368/api/friends/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
+
+                HttpResponseMessage response = await client.GetAsync("all");
+
+                string jsonString = await response.Content.ReadAsStringAsync();
+                existing_friendships = JsonConvert.DeserializeObject<List<FriendshipDTO>>(jsonString);
+            }
+            //remove option to add friends if users are already friends
+            for (int i = 0; i < users.Count; i++)
+            {
+                for (int j = 0; j < existing_friendships.Count; j++)
+                {
+                    if (users[i].id == existing_friendships[j].user1_id || users[i].id == existing_friendships[j].user2_id) {
+                        users[i].sentRequest = true;
+                    }
+                }
+            }
+            return View(users);
+        }
+
+        public ActionResult SendRequest(int id) {
+            return RedirectToAction("SendRequest", "Friends", new { id = id});
+        }
+
         public ActionResult Register()
         {
             ViewData["loggedin"] = false;
@@ -184,6 +281,121 @@ namespace MVC.Controllers
             oldCookie.Expires = DateTime.Now.AddDays(-1d);
             Response.Cookies.Add(oldCookie);
             return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<ActionResult> ViewUserProfile(int id) {
+            HttpCookie jwtCookie = HttpContext.Request.Cookies.Get("jwt");
+            UserDTO user = new UserDTO();
+            if (jwtCookie == null)
+            {
+                ViewData["loggedin"] = false;
+                return RedirectToAction("Login", "Users");
+            }
+            else {
+                ViewData["loggedin"] = true;
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = url;
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
+
+                    var content = JsonConvert.SerializeObject(jwtCookie);
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(content);
+                    var byteContent = new ByteArrayContent(buffer);
+                    byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                    HttpResponseMessage response = await client.PostAsync("userfromtoken", byteContent);
+                    string jsonString = await response.Content.ReadAsStringAsync();
+                    var UserResponseData = JsonConvert.DeserializeObject<UserDTO>(jsonString);
+                    string username = "";
+                    try
+                    {
+                        username = UserResponseData.username;
+                    }
+                    catch
+                    {
+                        //someone tampered with the token
+                        ViewData["loggedin"] = false;
+                        HttpCookie oldCookie = new HttpCookie("jwt");
+                        oldCookie.Expires = DateTime.Now.AddDays(-1d);
+                        Response.Cookies.Add(oldCookie);
+                        return View();
+                    }
+                    if (username != "")
+                    {
+                        UserDTO u = new UserDTO() { username = username };
+                        var content2 = JsonConvert.SerializeObject(u);
+                        var buffer2 = System.Text.Encoding.UTF8.GetBytes(content2);
+                        var byteContent2 = new ByteArrayContent(buffer2);
+                        byteContent2.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                        HttpResponseMessage user_response = await client.PostAsync("getbyusername", byteContent2);
+                        var User_jsonString = await user_response.Content.ReadAsStringAsync();
+                        var UserResoponseData = JsonConvert.DeserializeObject<UserDTO>(User_jsonString);
+                        user = UserResoponseData;
+                        ViewData["DisplayName"] = user.displayName;
+                    }
+                    else
+                    {
+                        ViewData["loggedin"] = false;
+                    }
+                }
+            }
+            UserDetailsVM model = null;
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:44368/api/users/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
+
+                HttpResponseMessage response = await client.GetAsync("getbyid/"+id);
+
+                string jsonString = await response.Content.ReadAsStringAsync();
+                model = JsonConvert.DeserializeObject<UserDetailsVM>(jsonString);
+                if (model.gender=="true")
+                {
+                    model.gender = "Male";
+                }
+                else
+                {
+                    model.gender = "Female";
+                }
+            }
+            List<FriendshipDTO> friends = new List<FriendshipDTO>();
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:44368/api/friends/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
+
+                HttpResponseMessage response = await client.GetAsync("all");
+
+                string jsonString = await response.Content.ReadAsStringAsync();
+                var fr_conns = JsonConvert.DeserializeObject<List<FriendshipDTO>>(jsonString);
+                for (int i = 0; i < fr_conns.Count; i++)
+                {
+                    if (fr_conns[i].user1_id == user.Id || fr_conns[i].user2_id == user.Id)
+                    {
+                        friends.Add(fr_conns[i]);
+                    }
+                }
+            }
+            for (int i = 0; i < friends.Count; i++)
+            {
+                if (friends[i].user1_id == model.Id || friends[i].user2_id == model.Id) {
+                    if (friends[i].pending)
+                    {
+                        model.sentrequest = true;
+                    }
+                    else {
+                        model.friends = true;
+                        model.sentrequest = true;
+                    }
+                }
+            }
+            return View(model);
         }
 
         public async Task<ActionResult> Profile() {

@@ -1,0 +1,51 @@
+﻿@model IEnumerable<MVC.ViewModels.UsersListVM>
+
+@{
+    ViewBag.Title = "UsersList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>All users</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.displayName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.birthday)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.gender)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.rating)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.displayName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.birthday)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.gender)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.rating)
+        </td>
+        <td>
+            @Html.ActionLink("View profile", "ViewUserProfile", new { id = item.id }) |
+            @if (!item.sentRequest)
+            {
+                @Html.ActionLink("Send friend request", "SendRequest", new { id = item.id })
+            }
+        </td>
+    </tr>
+}
+
+</table>

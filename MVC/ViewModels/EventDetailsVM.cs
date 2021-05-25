@@ -39,6 +39,8 @@ namespace MVC.ViewModels
         public int participants { get; set; }
         [Display(Name = "Friends going: ")]
         public int friendsgoing { get; set; }
+        [Display(Name = "Likes: ")]
+        public int likes { get; set; }
         public bool joined { get; set; }
         public bool hosting { get; set; }
         public EventDetailsVM() { }
@@ -52,6 +54,7 @@ namespace MVC.ViewModels
             begins = eventDto.begins;
             ends = eventDto.ends;
             participants = eventDto.participants;
+            likes = eventDto.likes;
         }
     }
 }

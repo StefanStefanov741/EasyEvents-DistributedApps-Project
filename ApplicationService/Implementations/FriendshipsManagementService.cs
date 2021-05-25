@@ -31,6 +31,26 @@ namespace ApplicationService.Implementations
             return friends;
         }
 
+        public bool AcceptFriendship(int id1, int id2) {
+            List<FriendshipDTO> friendships = GetAll();
+            FriendshipDTO fr = null;
+            for (int i = 0; i < friendships.Count; i++)
+            {
+                if ((friendships[i].user1_id == id1 && friendships[i].user2_id == id2) || (friendships[i].user1_id == id2 && friendships[i].user2_id == id1)) {
+                    fr = friendships[i];
+                    break;
+                }
+            }
+            if (fr == null)
+            {
+                return false;
+            }
+            else {
+                fr.pending = false;
+                return Update(fr);
+            }
+        }
+
         public object GetById(int id)
         {
             Friendship frnd = ctx.Friends.Where(f => f.Id == id).FirstOrDefault();

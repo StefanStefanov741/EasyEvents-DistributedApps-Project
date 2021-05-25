@@ -128,6 +128,7 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="Controllers\EventsController.cs" />
+    <Compile Include="Controllers\FriendsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
@@ -137,9 +138,12 @@
     <Compile Include="ViewModels\EventDetailsVM.cs" />
     <Compile Include="ViewModels\EventListVM.cs" />
     <Compile Include="ViewModels\EventVM.cs" />
+    <Compile Include="ViewModels\FriendsVM.cs" />
     <Compile Include="ViewModels\LoginVM.cs" />
     <Compile Include="ViewModels\ProfileVM.cs" />
     <Compile Include="ViewModels\RegisterVM.cs" />
+    <Compile Include="ViewModels\UserDetailsVM.cs" />
+    <Compile Include="ViewModels\UsersListVM.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Connected Services\SoapService\configuration91.svcinfo" />
@@ -209,6 +213,9 @@
     <Content Include="Views\Events\Create.cshtml" />
     <Content Include="Views\Events\ViewDetails.cshtml" />
     <Content Include="Views\Events\EditEvent.cshtml" />
+    <Content Include="Views\Friends\Index.cshtml" />
+    <Content Include="Views\Users\Index.cshtml" />
+    <Content Include="Views\Users\ViewUserProfile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
