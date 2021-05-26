@@ -1,6 +1,7 @@
 ﻿using ApplicationService.DTOs;
 using Data.Context;
 using Data.Entities;
+using Repository.Implementations;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,23 +9,27 @@ namespace ApplicationService.Implementations
 {
     public class UsersManagementService
     {
-        private DBContext ctx = new DBContext();
         public List<UserDTO> GetAll() {
             List<UserDTO> users = new List<UserDTO>();
-            foreach (var item in ctx.Users.ToList()) { 
-                users.Add(new UserDTO{
-                    Id = item.Id,
-                    username = item.username,
-                    password = item.password,
-                    displayName = item.displayName,
-                    email = item.email,
-                    phone_number = item.phone_number,
-                    bio = item.bio,
-                    socialLink = item.socialLink,
-                    rating = item.rating,
-                    birthday = item.birthday,
-                    gender = item.gender,
-                });
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                foreach (var item in unitOfWork.UserRepo.Get())
+                {
+                    users.Add(new UserDTO
+                    {
+                        Id = item.Id,
+                        username = item.username,
+                        password = item.password,
+                        displayName = item.displayName,
+                        email = item.email,
+                        phone_number = item.phone_number,
+                        bio = item.bio,
+                        socialLink = item.socialLink,
+                        rating = item.rating,
+                        birthday = item.birthday,
+                        gender = item.gender,
+                    });
+                }
             }
 
             return users;
@@ -32,14 +37,11 @@ namespace ApplicationService.Implementations
 
         public UserDTO GetById(int id)
         {
-            User user = ctx.Users.Where(u => u.Id == id).FirstOrDefault();
-            return UserToDto(user);
-        }
-
-        public UserDTO GetByUsername(string username)
-        {
-            User user = ctx.Users.Where(u => u.username == username).FirstOrDefault();
-            return UserToDto(user);
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                User user = unitOfWork.UserRepo.GetByID(id);
+                return UserToDto(user);
+            }
         }
 
         public bool Save(UserDTO userDTO) {
@@ -58,8 +60,11 @@ namespace ApplicationService.Implementations
 
             try
             {
-                ctx.Users.Add(user);
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    unitOfWork.UserRepo.Insert(user);
+                    unitOfWork.Save();
+                }
                 return true;
             }
             catch {
@@ -69,7 +74,11 @@ namespace ApplicationService.Implementations
 
         public bool Update(UserDTO userDTO)
         {
-            User toUpdate = ctx.Users.Find(userDTO.Id);
+            User toUpdate = null;
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                toUpdate = unitOfWork.UserRepo.GetByID(userDTO.Id);
+            }
             if (toUpdate != null) {
                 toUpdate.username = userDTO.username;
                 toUpdate.password = userDTO.password;
@@ -84,7 +93,11 @@ namespace ApplicationService.Implementations
             }
             try
             {
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    unitOfWork.UserRepo.Update(toUpdate);
+                    unitOfWork.Save();
+                }
                 return true;
             }
             catch
@@ -97,9 +110,12 @@ namespace ApplicationService.Implementations
         {
             try
             {
-                User user = ctx.Users.Find(id);
-                ctx.Users.Remove(user);
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    User user = unitOfWork.UserRepo.GetByID(id);
+                    unitOfWork.UserRepo.Delete(user);
+                    unitOfWork.Save();
+                }
                 return true;
             }
             catch { 
@@ -107,17 +123,29 @@ namespace ApplicationService.Implementations
             }
         }
 
-        public UserDTO FindUserByUsername(string username)
+        public UserDTO GetByUsername(string username)
         {
             try
             {
-                User user = ctx.Users.Where(u => u.username == username).FirstOrDefault();
-                if (user != null)
+                using (UnitOfWork unitOfWork = new UnitOfWork())
                 {
+                    User user = unitOfWork.UserRepo.Get().Where(u => u.username == username).FirstOrDefault();
                     return UserToDto(user);
                 }
-                else {
-                    return null;
+            }
+            catch {
+                return null;
+            }
+        }
+
+        public UserDTO GetByEmail(string email)
+        {
+            try
+            {
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    User user = unitOfWork.UserRepo.Get().Where(u => u.email == email).FirstOrDefault();
+                    return UserToDto(user);
                 }
             }
             catch
@@ -126,41 +154,14 @@ namespace ApplicationService.Implementations
             }
         }
 
-        public UserDTO FindUserByEmail(string email)
+        public UserDTO GetByDisplayName(string Dname)
         {
             try
             {
-                User user = ctx.Users.Where(u => u.email == email).FirstOrDefault();
-                if (user != null)
+                using (UnitOfWork unitOfWork = new UnitOfWork())
                 {
-                    int i = 0;
+                    User user = unitOfWork.UserRepo.Get().Where(u => u.displayName == Dname).FirstOrDefault();
                     return UserToDto(user);
-                }
-                else
-                {
-                    int i = 0;
-                    return null;
-                }
-            }
-            catch
-            {
-                int i = 0;
-                return null;
-            }
-        }
-
-        public UserDTO FindUserByDisplayName(string Dname)
-        {
-            try
-            {
-                User user = ctx.Users.Where(u => u.displayName == Dname).FirstOrDefault();
-                if (user != null)
-                {
-                    return UserToDto(user);
-                }
-                else
-                {
-                    return null;
                 }
             }
             catch
@@ -171,8 +172,11 @@ namespace ApplicationService.Implementations
 
         public UserDTO TryLoginUser(string un, string up)
         {
-            User temp_user = ctx.Users.Where(u => u.username == un && u.password == up).FirstOrDefault();
-            return UserToDto(temp_user);
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                User user = unitOfWork.UserRepo.Get().Where(u => u.username == un && u.password == up).FirstOrDefault();
+                return UserToDto(user);
+            }
         }
 
         public UserDTO UserToDto(User user) {

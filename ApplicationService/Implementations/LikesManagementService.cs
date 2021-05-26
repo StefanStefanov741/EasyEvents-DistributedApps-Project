@@ -1,6 +1,7 @@
 ﻿using ApplicationService.DTOs;
 using Data.Context;
 using Data.Entities;
+using Repository.Implementations;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,18 +9,20 @@ namespace ApplicationService.Implementations
 {
     public class LikesManagementService
     {
-        private DBContext ctx = new DBContext();
         public List<LikeDTO> GetAll()
         {
             List<LikeDTO> likes = new List<LikeDTO>();
-            foreach (var item in ctx.Likes.ToList())
+            using (UnitOfWork unitOfWork = new UnitOfWork())
             {
-                likes.Add(new LikeDTO
+                foreach (var item in unitOfWork.LikeRepo.Get())
                 {
-                    Id = item.Id,
-                    User_id = item.User_id,
-                    Event_id = item.Event_id
-                });
+                    likes.Add(new LikeDTO
+                    {
+                        Id = item.Id,
+                        User_id = item.User_id,
+                        Event_id = item.Event_id
+                    });
+                }
             }
 
             return likes;
@@ -27,8 +30,11 @@ namespace ApplicationService.Implementations
 
         public object GetById(int id)
         {
-            Like like = ctx.Likes.Where(l => l.Id == id).FirstOrDefault();
-            return LikeToDto(like);
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                Like like = unitOfWork.LikeRepo.GetByID(id);
+                return LikeToDto(like);
+            }
         }
 
         public bool Save(LikeDTO likeDTO)
@@ -41,8 +47,11 @@ namespace ApplicationService.Implementations
 
             try
             {
-                ctx.Likes.Add(like);
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    unitOfWork.LikeRepo.Insert(like);
+                    unitOfWork.Save();
+                };
                 return true;
             }
             catch
@@ -55,9 +64,12 @@ namespace ApplicationService.Implementations
         {
             try
             {
-                Like like = ctx.Likes.Find(id);
-                ctx.Likes.Remove(like);
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    Like toDel = unitOfWork.LikeRepo.GetByID(id);
+                    unitOfWork.LikeRepo.Delete(toDel);
+                    unitOfWork.Save();
+                }
                 return true;
             }
             catch

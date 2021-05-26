@@ -1,6 +1,7 @@
 ﻿using ApplicationService.DTOs;
 using Data.Context;
 using Data.Entities;
+using Repository.Implementations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,21 +12,23 @@ namespace ApplicationService.Implementations
 {
     public class FriendshipsManagementService
     {
-        private DBContext ctx = new DBContext();
         public List<FriendshipDTO> GetAll()
         {
             List<FriendshipDTO> friends = new List<FriendshipDTO>();
-            foreach (var item in ctx.Friends.ToList())
+            using (UnitOfWork unitOfWork = new UnitOfWork())
             {
-                friends.Add(new FriendshipDTO
+                foreach (var item in unitOfWork.FriendshipRepo.Get())
                 {
-                    Id = item.Id,
-                    user1_id = item.user1_id,
-                    user2_id = item.user2_id,
-                    befriend_date=item.befriend_date,
-                    pending = item.pending,
-                    friendshipTier = item.friendshipTier
-                });
+                    friends.Add(new FriendshipDTO
+                    {
+                        Id = item.Id,
+                        user1_id = item.user1_id,
+                        user2_id = item.user2_id,
+                        befriend_date = item.befriend_date,
+                        pending = item.pending,
+                        friendshipTier = item.friendshipTier
+                    });
+                }
             }
 
             return friends;
@@ -53,8 +56,11 @@ namespace ApplicationService.Implementations
 
         public object GetById(int id)
         {
-            Friendship frnd = ctx.Friends.Where(f => f.Id == id).FirstOrDefault();
-            return FriendshipToDTO(frnd);
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                Friendship friend = unitOfWork.FriendshipRepo.GetByID(id);
+                return FriendshipToDTO(friend);
+            }
         }
 
         public bool Save(FriendshipDTO friendsDTO)
@@ -70,8 +76,11 @@ namespace ApplicationService.Implementations
 
             try
             {
-                ctx.Friends.Add(friend);
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    unitOfWork.FriendshipRepo.Insert(friend);
+                    unitOfWork.Save();
+                }
                 return true;
             }
             catch
@@ -82,7 +91,11 @@ namespace ApplicationService.Implementations
 
         public bool Update(FriendshipDTO friendDTO)
         {
-            Friendship toUpdate = ctx.Friends.Find(friendDTO.Id);
+            Friendship toUpdate = null;
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                toUpdate = unitOfWork.FriendshipRepo.GetByID(friendDTO.Id);
+            }
             if (toUpdate != null)
             {
                 toUpdate.user1_id = friendDTO.user1_id;
@@ -93,7 +106,11 @@ namespace ApplicationService.Implementations
             }
             try
             {
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    unitOfWork.FriendshipRepo.Update(toUpdate);
+                    unitOfWork.Save();
+                }
                 return true;
             }
             catch
@@ -106,9 +123,12 @@ namespace ApplicationService.Implementations
         {
             try
             {
-                Friendship friend = ctx.Friends.Find(id);
-                ctx.Friends.Remove(friend);
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    Friendship friend = unitOfWork.FriendshipRepo.GetByID(id);
+                    unitOfWork.UserRepo.Delete(friend);
+                    unitOfWork.Save();
+                }
                 return true;
             }
             catch

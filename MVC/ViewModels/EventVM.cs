@@ -1,4 +1,6 @@
 ﻿using ApplicationService.DTOs;
+using Microsoft.OData.Edm;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -30,6 +32,7 @@ namespace MVC.ViewModels
         [Display(Name = "Begins date")]
         [DataType(DataType.Date)]
         public DateTime begins_date { get; set; }
+
         [Required]
         [Display(Name = "Begins time")]
         [DataType(DataType.Time)]
@@ -38,10 +41,12 @@ namespace MVC.ViewModels
         [Display(Name = "Ends date")]
         [DataType(DataType.Date)]
         public DateTime ends_date { get; set; }
+
         [Required]
         [Display(Name = "Ends time")]
         [DataType(DataType.Time)]
         public DateTime ends_time { get; set; }
+
         public int participants { get; set; }
         public int likes { get; set; }
         public EventVM() { }

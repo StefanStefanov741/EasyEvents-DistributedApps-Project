@@ -156,8 +156,8 @@ namespace MVC.Controllers
                     host_id = h_id,
                     likes = 0,
                     createdOn = DateTime.Now,
-                    begins = new DateTime(model.begins_date.Date.Year, model.begins_date.Date.Month, model.begins_date.Date.Day, model.begins_time.Hour, model.begins_time.Minute, 0),
-                    ends = new DateTime(model.ends_date.Date.Year, model.ends_date.Date.Month, model.ends_date.Date.Day, model.ends_time.Hour, model.ends_time.Minute, 0),
+                    begins = new DateTime(model.begins_date.Year, model.begins_date.Month, model.begins_date.Day, model.begins_time.Hour,model.begins_time.Minute,0),
+                    ends = new DateTime(model.ends_date.Year, model.ends_date.Month, model.ends_date.Day, model.ends_time.Hour,model.ends_time.Minute,0),
                     participants = 1
                 };
                 if (new_event.begins > new_event.ends) {
@@ -986,9 +986,31 @@ namespace MVC.Controllers
         [HttpPost]
         public async Task<ActionResult> EditEvent(EventVM model) {
             HttpCookie jwtCookie = HttpContext.Request.Cookies.Get("jwt");
-            if (jwtCookie == null) {
+            if (jwtCookie == null)
+            {
                 ViewData["loggedin"] = false;
-                return RedirectToAction("Login","Users");
+                return RedirectToAction("Login", "Users");
+            }
+            else {
+                ViewData["loggedin"] = true;
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("https://localhost:44368/api/users/");
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
+
+                    var content = JsonConvert.SerializeObject(jwtCookie);
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(content);
+                    var byteContent = new ByteArrayContent(buffer);
+                    byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                    HttpResponseMessage response = await client.PostAsync("userfromtoken", byteContent);
+
+                    string jsonString = await response.Content.ReadAsStringAsync();
+                    var current_user = JsonConvert.DeserializeObject<UserDTO>(jsonString);
+                    ViewData["DisplayName"] = current_user.displayName;
+                }
             }
             if (ModelState.IsValid)
             {
@@ -1001,8 +1023,8 @@ namespace MVC.Controllers
                     host_id = model.host_id,
                     likes = model.likes,
                     createdOn = model.createdOn,
-                    begins = new DateTime(model.begins_date.Date.Year, model.begins_date.Date.Month, model.begins_date.Date.Day, model.begins_time.Hour, model.begins_time.Minute, 0),
-                    ends = new DateTime(model.ends_date.Date.Year, model.ends_date.Date.Month, model.ends_date.Date.Day, model.ends_time.Hour, model.ends_time.Minute, 0),
+                    begins = new DateTime(model.begins_date.Year, model.begins_date.Month, model.begins_date.Day, model.begins_time.Hour, model.begins_time.Minute, 0),
+                    ends = new DateTime(model.ends_date.Year, model.ends_date.Month, model.ends_date.Day, model.ends_time.Hour, model.ends_time.Minute, 0),
                     participants = model.participants
                 };
                 //update

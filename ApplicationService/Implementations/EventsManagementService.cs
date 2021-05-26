@@ -1,6 +1,7 @@
 ﻿using ApplicationService.DTOs;
 using Data.Context;
 using Data.Entities;
+using Repository.Implementations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,26 +12,28 @@ namespace ApplicationService.Implementations
 {
     public class EventsManagementService
     {
-        private DBContext ctx = new DBContext();
         public List<EventDTO> GetAll()
         {
             List<EventDTO> events = new List<EventDTO>();
-            foreach (var item in ctx.Events.ToList())
+            using (UnitOfWork unitOfWork = new UnitOfWork())
             {
-                events.Add(new EventDTO
+                foreach (var item in unitOfWork.EventRepo.Get())
                 {
-                    Id = item.Id,
-                    title=item.title,
-                    description=item.description,
-                    location=item.location,
-                    host_id=item.host_id,
-                    likes=item.likes,
-                    createdOn=item.createdOn,
-                    begins=item.begins,
-                    ends = item.ends,
-                    ended=item.ended,
-                    participants=item.participants
-                });
+                    events.Add(new EventDTO
+                    {
+                        Id = item.Id,
+                        title = item.title,
+                        description = item.description,
+                        location = item.location,
+                        host_id = item.host_id,
+                        likes = item.likes,
+                        createdOn = item.createdOn,
+                        begins = item.begins,
+                        ends = item.ends,
+                        ended = item.ended,
+                        participants = item.participants
+                    });
+                }
             }
 
             return events;
@@ -38,16 +41,24 @@ namespace ApplicationService.Implementations
 
         public object GetById(int id)
         {
-            Event ev = ctx.Events.Where(e => e.Id == id).FirstOrDefault();
-            return EventToDto(ev);
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                Event ev = unitOfWork.EventRepo.GetByID(id);
+                return EventToDto(ev);
+            }
         }
 
         public int GiveID(EventDTO ev) {
             int id = 0;
-            foreach (var item in ctx.Events.ToList())
+            using (UnitOfWork unitOfWork = new UnitOfWork())
             {
-                if (item.host_id == ev.host_id && item.title == ev.title && item.location == ev.location) {
-                    id = item.Id;
+                var events = unitOfWork.EventRepo.Get();
+                foreach (var item in events)
+                {
+                    if (item.host_id == ev.host_id && item.title == ev.title && item.location == ev.location)
+                    {
+                        id = item.Id;
+                    }
                 }
             }
             return id;
@@ -71,8 +82,11 @@ namespace ApplicationService.Implementations
 
             try
             {
-                ctx.Events.Add(ev);
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    unitOfWork.EventRepo.Insert(ev);
+                    unitOfWork.Save();
+                }
                 return true;
             }
             catch
@@ -83,7 +97,11 @@ namespace ApplicationService.Implementations
 
         public bool Update(EventDTO evenyDTO)
         {
-            Event toUpdate = ctx.Events.Find(evenyDTO.Id);
+            Event toUpdate = null;
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                toUpdate = unitOfWork.EventRepo.GetByID(evenyDTO.Id);
+            }
             if (toUpdate != null)
             {
                 toUpdate.title = evenyDTO.title;
@@ -99,7 +117,11 @@ namespace ApplicationService.Implementations
             }
             try
             {
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    unitOfWork.EventRepo.Update(toUpdate);
+                    unitOfWork.Save();
+                }
                 return true;
             }
             catch
@@ -110,14 +132,22 @@ namespace ApplicationService.Implementations
 
         public bool Like(int id)
         {
-            Event toLike = ctx.Events.Find(id);
+            Event toLike = null;
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                toLike = unitOfWork.EventRepo.GetByID(id);
+            }
             if (toLike != null)
             {
                 toLike.likes++;
             }
             try
             {
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    unitOfWork.EventRepo.Update(toLike);
+                    unitOfWork.Save();
+                }
                 return true;
             }
             catch
@@ -128,14 +158,22 @@ namespace ApplicationService.Implementations
 
         public bool Dislike(int id)
         {
-            Event toDislike = ctx.Events.Find(id);
+            Event toDislike = null;
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                toDislike = unitOfWork.EventRepo.GetByID(id);
+            }
             if (toDislike != null)
             {
                 toDislike.likes--;
             }
             try
             {
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    unitOfWork.EventRepo.Update(toDislike);
+                    unitOfWork.Save();
+                }
                 return true;
             }
             catch
@@ -146,14 +184,22 @@ namespace ApplicationService.Implementations
 
         public bool Join(int id)
         {
-            Event toJoin = ctx.Events.Find(id);
+            Event toJoin = null;
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                toJoin = unitOfWork.EventRepo.GetByID(id);
+            }
             if (toJoin != null)
             {
                 toJoin.participants++;
             }
             try
             {
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    unitOfWork.EventRepo.Update(toJoin);
+                    unitOfWork.Save();
+                }
                 return true;
             }
             catch
@@ -164,14 +210,22 @@ namespace ApplicationService.Implementations
 
         public bool Leave(int id)
         {
-            Event toLeave = ctx.Events.Find(id);
+            Event toLeave = null;
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                toLeave = unitOfWork.EventRepo.GetByID(id);
+            }
             if (toLeave != null)
             {
                 toLeave.participants--;
             }
             try
             {
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    unitOfWork.EventRepo.Update(toLeave);
+                    unitOfWork.Save();
+                }
                 return true;
             }
             catch
@@ -184,9 +238,12 @@ namespace ApplicationService.Implementations
         {
             try
             {
-                Event ev = ctx.Events.Find(id);
-                ctx.Events.Remove(ev);
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    Event ev = unitOfWork.EventRepo.GetByID(id);
+                    unitOfWork.EventRepo.Delete(ev);
+                    unitOfWork.Save();
+                }
                 return true;
             }
             catch

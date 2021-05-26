@@ -73,19 +73,19 @@ namespace WcfService
 
         public UserDTO GetUserByUsername(string username)
         {
-            UserDTO u = usersService.FindUserByUsername(username);
+            UserDTO u = usersService.GetByUsername(username);
             return u;
         }
 
         public UserDTO GetUserByEmail(string email)
         {
-            UserDTO u = usersService.FindUserByEmail(email);
+            UserDTO u = usersService.GetByEmail(email);
             return u;
         }
 
         public UserDTO GetUserByDisplayName(string Dname)
         {
-            UserDTO u = usersService.FindUserByDisplayName(Dname);
+            UserDTO u = usersService.GetByDisplayName(Dname);
             return u;
         }
 

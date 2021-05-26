@@ -1,6 +1,7 @@
 ﻿using ApplicationService.DTOs;
 using Data.Context;
 using Data.Entities;
+using Repository.Implementations;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,18 +9,20 @@ namespace ApplicationService.Implementations
 {
     public class HostToEventManagementService
     {
-        private DBContext ctx = new DBContext();
         public List<HostToEventDTO> GetAll()
         {
             List<HostToEventDTO> hostToEvents = new List<HostToEventDTO>();
-            foreach (var item in ctx.HostToEvents.ToList())
+            using (UnitOfWork unitOfWork = new UnitOfWork())
             {
-                hostToEvents.Add(new HostToEventDTO
+                foreach (var item in unitOfWork.HteRepo.Get())
                 {
-                    Id = item.Id,
-                    Host_id = item.Host_id,
-                    Event_id = item.Event_id
-                });
+                    hostToEvents.Add(new HostToEventDTO
+                    {
+                        Id = item.Id,
+                        Host_id = item.Host_id,
+                        Event_id = item.Event_id
+                    });
+                }
             }
 
             return hostToEvents;
@@ -27,8 +30,11 @@ namespace ApplicationService.Implementations
 
         public object GetById(int id)
         {
-            HostToEvent hte = ctx.HostToEvents.Where(he => he.Id == id).FirstOrDefault();
-            return HTEToDto(hte);
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                HostToEvent hte = unitOfWork.HteRepo.GetByID(id);
+                return HTEToDto(hte);
+            }
         }
 
         public bool Save(HostToEventDTO hostToEventDTO)
@@ -41,8 +47,11 @@ namespace ApplicationService.Implementations
 
             try
             {
-                ctx.HostToEvents.Add(hte);
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    unitOfWork.HteRepo.Insert(hte);
+                    unitOfWork.Save();
+                };
                 return true;
             }
             catch
@@ -53,7 +62,11 @@ namespace ApplicationService.Implementations
 
         public bool Update(HostToEventDTO hostToEventDTO)
         {
-            HostToEvent toUpdate = ctx.HostToEvents.Find(hostToEventDTO.Id);
+            HostToEvent toUpdate = null;
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                toUpdate = unitOfWork.HteRepo.GetByID(hostToEventDTO.Id);
+            }
             if (toUpdate != null)
             {
                 toUpdate.Host_id = hostToEventDTO.Host_id;
@@ -61,7 +74,11 @@ namespace ApplicationService.Implementations
             }
             try
             {
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    unitOfWork.HteRepo.Update(toUpdate);
+                    unitOfWork.Save();
+                }
                 return true;
             }
             catch
@@ -74,9 +91,12 @@ namespace ApplicationService.Implementations
         {
             try
             {
-                HostToEvent hte = ctx.HostToEvents.Find(id);
-                ctx.HostToEvents.Remove(hte);
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    HostToEvent toDel = unitOfWork.HteRepo.GetByID(id);
+                    unitOfWork.HteRepo.Delete(toDel);
+                    unitOfWork.Save();
+                }
                 return true;
             }
             catch

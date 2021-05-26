@@ -99,9 +99,9 @@ namespace WebAPI.Controllers
         {
             ResponseMessage response = new ResponseMessage();
 
-            UserDTO u1 = _service.FindUserByUsername(userDTO.username);
-            UserDTO u2 = _service.FindUserByDisplayName(userDTO.displayName);
-            UserDTO u3 = _service.FindUserByEmail(userDTO.email);
+            UserDTO u1 = _service.GetByUsername(userDTO.username);
+            UserDTO u2 = _service.GetByDisplayName(userDTO.displayName);
+            UserDTO u3 = _service.GetByEmail(userDTO.email);
             response.Code = 404;
 
             if (u2 != null)

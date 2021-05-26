@@ -1,6 +1,7 @@
 ﻿using ApplicationService.DTOs;
 using Data.Context;
 using Data.Entities;
+using Repository.Implementations;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,18 +9,20 @@ namespace ApplicationService.Implementations
 {
     public class ParticipantToEventManagementService
     {
-        private DBContext ctx = new DBContext();
         public List<ParticipantToEventDTO> GetAll()
         {
             List<ParticipantToEventDTO> participantsToEvents = new List<ParticipantToEventDTO>();
-            foreach (var item in ctx.ParticipantsToEvents.ToList())
+            using (UnitOfWork unitOfWork = new UnitOfWork())
             {
-                participantsToEvents.Add(new ParticipantToEventDTO
+                foreach (var item in unitOfWork.PteRepo.Get())
                 {
-                    Id = item.Id,
-                    Participant_id = item.Participant_id,
-                    Event_id = item.Event_id
-                });
+                    participantsToEvents.Add(new ParticipantToEventDTO
+                    {
+                        Id = item.Id,
+                        Participant_id = item.Participant_id,
+                        Event_id = item.Event_id
+                    });
+                }
             }
 
             return participantsToEvents;
@@ -27,8 +30,11 @@ namespace ApplicationService.Implementations
 
         public object GetById(int id)
         {
-            ParticipantToEvent pte = ctx.ParticipantsToEvents.Where(pe => pe.Id == id).FirstOrDefault();
-            return PTEToDto(pte);
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                ParticipantToEvent pte = unitOfWork.PteRepo.GetByID(id);
+                return PTEToDto(pte);
+            }
         }
 
         public bool Save(ParticipantToEventDTO participantToeventDto)
@@ -41,8 +47,11 @@ namespace ApplicationService.Implementations
 
             try
             {
-                ctx.ParticipantsToEvents.Add(pte);
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    unitOfWork.PteRepo.Insert(pte);
+                    unitOfWork.Save();
+                };
                 return true;
             }
             catch
@@ -53,7 +62,11 @@ namespace ApplicationService.Implementations
 
         public bool Update(ParticipantToEventDTO participantToEventDTO)
         {
-            ParticipantToEvent toUpdate = ctx.ParticipantsToEvents.Find(participantToEventDTO.Id);
+            ParticipantToEvent toUpdate = null;
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                toUpdate = unitOfWork.PteRepo.GetByID(participantToEventDTO.Id);
+            }
             if (toUpdate != null)
             {
                 toUpdate.Participant_id = participantToEventDTO.Participant_id;
@@ -61,7 +74,11 @@ namespace ApplicationService.Implementations
             }
             try
             {
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    unitOfWork.PteRepo.Update(toUpdate);
+                    unitOfWork.Save();
+                }
                 return true;
             }
             catch
@@ -74,9 +91,12 @@ namespace ApplicationService.Implementations
         {
             try
             {
-                ParticipantToEvent pte = ctx.ParticipantsToEvents.Find(id);
-                ctx.ParticipantsToEvents.Remove(pte);
-                ctx.SaveChanges();
+                using (UnitOfWork unitOfWork = new UnitOfWork())
+                {
+                    ParticipantToEvent toDel = unitOfWork.PteRepo.GetByID(id);
+                    unitOfWork.PteRepo.Delete(toDel);
+                    unitOfWork.Save();
+                }
                 return true;
             }
             catch
