@@ -20,6 +20,28 @@
 <table class="table">
     <tr>
         <th>
+            <label for="SearchTitle">Title</label>
+        </th>
+        <th>
+            <label for="SearchLocation" class="col-lg-offset-1">Location</label>
+        </th>
+    </tr>
+    <tr>
+        <th>
+            <input type="text" id="titleSearch" name="Search title" class="form-control" value="@ViewData["stVal"]">
+        </th>
+        <th>
+            <input type="text" id="locationSearch" name="Search location" class="form-control" value="@ViewData["slVal"]">
+        </th>
+        <th>
+            <a href='https://localhost:44383/Events/Index' onclick="this.href='https://localhost:44383/Events/Index?st='+document.getElementById('titleSearch').value+'&sl='+document.getElementById('locationSearch').value" class="btn btn-default">Search</a>
+        </th>
+    </tr>
+</table>
+
+<table class="table">
+    <tr>
+        <th>
             @Html.DisplayNameFor(model => model.title)
         </th>
         <th>

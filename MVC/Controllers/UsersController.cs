@@ -19,7 +19,23 @@ namespace MVC.Controllers
     {
         private readonly Uri url = new Uri("https://localhost:44368/api/users/");
 
-        public async Task<ActionResult> Index() {
+        public async Task<ActionResult> Index(string sn,string sr) {
+            if (sn != null)
+            {
+                ViewData["snVal"] = sn;
+            }
+            else
+            {
+                ViewData["snVal"] = "";
+            }
+            if (sr != null)
+            {
+                ViewData["srVal"] = sr.ToString();
+            }
+            else
+            {
+                ViewData["srVal"] = "";
+            }
             //test if user is still logged in and authorized
             HttpCookie jwtCookie = HttpContext.Request.Cookies.Get("jwt");
             //check if user is logged in or not
@@ -60,7 +76,31 @@ namespace MVC.Controllers
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
 
-                HttpResponseMessage response = await client.GetAsync("all");
+                HttpResponseMessage response;
+                var isNumberic = int.TryParse(sr, out _);
+                if (!isNumberic)
+                {
+                    sr = "";
+                }
+                if ((sn == "" || sn == null) && (sr == "" || sr == null))
+                {
+                    response = await client.GetAsync("all");
+                }
+                else
+                {
+                    if (sn == null || sn == "")
+                    {
+                        response = await client.GetAsync("allsr/" + sr);
+                    }
+                    else if (sr == null || sr == "")
+                    {
+                        response = await client.GetAsync("allsn/" + sn);
+                    }
+                    else
+                    {
+                        response = await client.GetAsync("all/" + sn + "/" + sr);
+                    }
+                }
 
                 string jsonString = await response.Content.ReadAsStringAsync();
                 users = JsonConvert.DeserializeObject<List<UsersListVM>>(jsonString);
@@ -81,10 +121,9 @@ namespace MVC.Controllers
                 }
                 users[i].sentRequest = false;
             }
-            if (removeCurrentUserAt < 0) {
-                return RedirectToAction("Index", "Home");
+            if (removeCurrentUserAt > -1) {
+                users.RemoveAt(removeCurrentUserAt);
             }
-            users.RemoveAt(removeCurrentUserAt);
             //get all friends ids
             List<FriendshipDTO> existing_friendships = new List<FriendshipDTO>();
             using (var client = new HttpClient())

@@ -10,6 +10,28 @@
 <table class="table">
     <tr>
         <th>
+            <label for="SearchName">Name</label>
+        </th>
+        <th>
+            <label for="SearchRating" class="col-lg-offset-1">Rating</label>
+        </th>
+    </tr>
+    <tr>
+        <th>
+            <input type="text" id="nameSearch" name="Search name" class="form-control" value="@ViewData["snVal"]">
+        </th>
+        <th>
+            <input type="text" id="ratingSearch" name="Search rating" class="form-control" value="@ViewData["srVal"]">
+        </th>
+        <th>
+            <a href='https://localhost:44383/Users/Index' onclick="this.href='https://localhost:44383/Users/Index?sn='+document.getElementById('nameSearch').value+'&sr='+document.getElementById('ratingSearch').value" class="btn btn-default">Search</a>
+        </th>
+    </tr>
+</table>
+
+<table class="table">
+    <tr>
+        <th>
             @Html.DisplayNameFor(model => model.displayName)
         </th>
         <th>

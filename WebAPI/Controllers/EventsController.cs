@@ -21,6 +21,27 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
+        [Route("all/{st}/{sl}")]
+        public IHttpActionResult SearchAll(string st,string sl)
+        {
+            return Json(_service.GetAll(st,sl));
+        }
+
+        [HttpGet]
+        [Route("allst/{st}")]
+        public IHttpActionResult SearchAllSt(string st)
+        {
+            return Json(_service.GetAllST(st));
+        }
+
+        [HttpGet]
+        [Route("allsl/{sl}")]
+        public IHttpActionResult SearchAllSl(string sl)
+        {
+            return Json(_service.GetAllSL(sl));
+        }
+
+        [HttpGet]
         [Route("getbyid/{id}")]
         public IHttpActionResult GetById(int id)
         {

@@ -5,6 +5,7 @@ using Repository.Implementations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,6 +19,90 @@ namespace ApplicationService.Implementations
             using (UnitOfWork unitOfWork = new UnitOfWork())
             {
                 foreach (var item in unitOfWork.EventRepo.Get())
+                {
+                    events.Add(new EventDTO
+                    {
+                        Id = item.Id,
+                        title = item.title,
+                        description = item.description,
+                        location = item.location,
+                        host_id = item.host_id,
+                        likes = item.likes,
+                        createdOn = item.createdOn,
+                        begins = item.begins,
+                        ends = item.ends,
+                        ended = item.ended,
+                        participants = item.participants
+                    });
+                }
+            }
+
+            return events;
+        }
+
+        public List<EventDTO> GetAllST(string st)
+        {
+            Expression<Func<Event, bool>> filter = ev => ev.title.Contains(st);
+            List<EventDTO> events = new List<EventDTO>();
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                foreach (var item in unitOfWork.EventRepo.Get(filter))
+                {
+                    events.Add(new EventDTO
+                    {
+                        Id = item.Id,
+                        title = item.title,
+                        description = item.description,
+                        location = item.location,
+                        host_id = item.host_id,
+                        likes = item.likes,
+                        createdOn = item.createdOn,
+                        begins = item.begins,
+                        ends = item.ends,
+                        ended = item.ended,
+                        participants = item.participants
+                    });
+                }
+            }
+
+            return events;
+        }
+
+        public List<EventDTO> GetAllSL(string sl)
+        {
+            Expression<Func<Event, bool>> filter = ev => ev.location.Contains(sl);
+            List<EventDTO> events = new List<EventDTO>();
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                foreach (var item in unitOfWork.EventRepo.Get(filter))
+                {
+                    events.Add(new EventDTO
+                    {
+                        Id = item.Id,
+                        title = item.title,
+                        description = item.description,
+                        location = item.location,
+                        host_id = item.host_id,
+                        likes = item.likes,
+                        createdOn = item.createdOn,
+                        begins = item.begins,
+                        ends = item.ends,
+                        ended = item.ended,
+                        participants = item.participants
+                    });
+                }
+            }
+
+            return events;
+        }
+
+        public List<EventDTO> GetAll(string st,string sl)
+        {
+            Expression<Func<Event, bool>> filter = ev => (ev.location.Contains(sl)) &&(ev.title.Contains(st));
+            List<EventDTO> events = new List<EventDTO>();
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                foreach (var item in unitOfWork.EventRepo.Get(filter))
                 {
                     events.Add(new EventDTO
                     {

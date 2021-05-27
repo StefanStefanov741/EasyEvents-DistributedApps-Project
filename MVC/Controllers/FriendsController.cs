@@ -14,8 +14,32 @@ namespace MVC.Controllers
     public class FriendsController : Controller
     {
         private readonly Uri url = new Uri("https://localhost:44368/api/friends/");
-        public async System.Threading.Tasks.Task<ActionResult> Index()
+        public async System.Threading.Tasks.Task<ActionResult> Index(string sn,string se,string sr)
         {
+            if (sn != null)
+            {
+                ViewData["snVal"] = sn;
+            }
+            else
+            {
+                ViewData["snVal"] = "";
+            }
+            if (se != null)
+            {
+                ViewData["seVal"] = se;
+            }
+            else
+            {
+                ViewData["seVal"] = "";
+            }
+            if (sr != null)
+            {
+                ViewData["srVal"] = sr.ToString();
+            }
+            else
+            {
+                ViewData["srVal"] = "";
+            }
             //test if user is still logged in and authorized
             HttpCookie jwtCookie = HttpContext.Request.Cookies.Get("jwt");
             //check if user is logged in or not
@@ -107,7 +131,54 @@ namespace MVC.Controllers
                             }
                         }
                     }
-                    myFriends.Add(friend);
+                    int rat = -1;
+                    var isNumberic = int.TryParse(sr, out rat);
+                    if (!isNumberic)
+                    {
+                        sr = "";
+                    }
+                    bool add = false;
+                    if ((sn == "" || sn == null) && (sr == "" || sr == null) && (se == "" || se == null))
+                    {
+                        add = true;
+                    }
+                    else {
+                        bool okName = false;
+                        bool okRating = false;
+                        bool okEmail = false;
+                        if (sn == "" || sn == null) {
+                            okName = true;
+                        }
+                        if (sr == "" || sr == null)
+                        {
+                            okRating = true;
+                        }
+                        if (se == "" || se == null)
+                        {
+                            okEmail = true;
+                        }
+                        if (!okName && friend.displayName.Contains(sn)) {
+                            okName = true;
+                        }
+                        if (!okRating && friend.rating == rat)
+                        {
+                            okRating = true;
+                        }
+                        if (!okEmail && friend.email.Contains(se))
+                        {
+                            okEmail = true;
+                        }
+                        if (okName && okEmail && okRating)
+                        {
+                            add = true;
+                        }
+                        else {
+                            add = false;
+                        }
+                    }
+                    if (add) {
+                        myFriends.Add(friend);
+                    }
                 }
             }
             return View(myFriends);

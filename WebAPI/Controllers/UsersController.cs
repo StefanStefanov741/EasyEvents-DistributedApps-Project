@@ -29,6 +29,27 @@ namespace WebAPI.Controllers
             return Json(_service.GetAll());
         }
 
+        [HttpGet]
+        [Route("all/{sn}/{sr}")]
+        public IHttpActionResult GetAllUsers(string sn,string sr)
+        {
+            return Json(_service.GetAll(sn,sr));
+        }
+
+        [HttpGet]
+        [Route("allsn/{sn}")]
+        public IHttpActionResult GetAllUsersSN(string sn)
+        {
+            return Json(_service.GetAllSN(sn));
+        }
+
+        [HttpGet]
+        [Route("allsr/{sr}")]
+        public IHttpActionResult GetAllUsersSR(string sr)
+        {
+            return Json(_service.GetAllSR(sr));
+        }
+
         [Authorize]
         [HttpGet]
         [Route("getbyid/{id}")]

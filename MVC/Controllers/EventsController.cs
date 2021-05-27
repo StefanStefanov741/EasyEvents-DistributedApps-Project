@@ -9,15 +9,29 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using WebAPI.Messages;
 
 namespace MVC.Controllers
 {
     public class EventsController : Controller
     {
         private readonly Uri url = new Uri("https://localhost:44368/api/events/");
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(string st,string sl)
         {
+            if (st != null)
+            {
+                ViewData["stVal"] = st;
+            }
+            else {
+                ViewData["stVal"] = "";
+            }
+            if (sl != null)
+            {
+                ViewData["slVal"] = sl;
+            }
+            else
+            {
+                ViewData["slVal"] = "";
+            }
             //test if user is still logged in and authorized
             HttpCookie jwtCookie = HttpContext.Request.Cookies.Get("jwt");
             //check if user is logged in or not
@@ -48,15 +62,31 @@ namespace MVC.Controllers
                 }
                 ViewData["DisplayName"] = current_user.displayName;
             }
-            //get events
             List<EventListVM> events;
+            //get events
             using (var client = new HttpClient())
             {
                 client.BaseAddress = url;
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                HttpResponseMessage response = await client.GetAsync("all");
+                HttpResponseMessage response = null;
+                if ((st == "" || st == null) && (sl == "" || sl == null))
+                {
+                    response = await client.GetAsync("all");
+                }
+                else {
+                    if (st == null || st=="")
+                    {
+                        response = await client.GetAsync("allsl/" + sl);
+                    }
+                    else if (sl == null || sl == "")
+                    {
+                        response = await client.GetAsync("allst/" + st);
+                    }
+                    else {
+                        response = await client.GetAsync("all/" + st + "/" + sl);
+                    }
+                }
 
                 string jsonString = await response.Content.ReadAsStringAsync();
                 events = JsonConvert.DeserializeObject<List<EventListVM>>(jsonString);

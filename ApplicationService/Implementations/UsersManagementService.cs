@@ -2,8 +2,10 @@
 using Data.Context;
 using Data.Entities;
 using Repository.Implementations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace ApplicationService.Implementations
 {
@@ -14,6 +16,92 @@ namespace ApplicationService.Implementations
             using (UnitOfWork unitOfWork = new UnitOfWork())
             {
                 foreach (var item in unitOfWork.UserRepo.Get())
+                {
+                    users.Add(new UserDTO
+                    {
+                        Id = item.Id,
+                        username = item.username,
+                        password = item.password,
+                        displayName = item.displayName,
+                        email = item.email,
+                        phone_number = item.phone_number,
+                        bio = item.bio,
+                        socialLink = item.socialLink,
+                        rating = item.rating,
+                        birthday = item.birthday,
+                        gender = item.gender,
+                    });
+                }
+            }
+
+            return users;
+        }
+
+        public List<UserDTO> GetAll(string sn,string sr)
+        {
+            int rat = int.Parse(sr);
+            Expression<Func<User, bool>> filter = u => (u.displayName.Contains(sn))&&(u.rating==rat);
+            List<UserDTO> users = new List<UserDTO>();
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                foreach (var item in unitOfWork.UserRepo.Get(filter))
+                {
+                    users.Add(new UserDTO
+                    {
+                        Id = item.Id,
+                        username = item.username,
+                        password = item.password,
+                        displayName = item.displayName,
+                        email = item.email,
+                        phone_number = item.phone_number,
+                        bio = item.bio,
+                        socialLink = item.socialLink,
+                        rating = item.rating,
+                        birthday = item.birthday,
+                        gender = item.gender,
+                    });
+                }
+            }
+
+            return users;
+        }
+
+        public List<UserDTO> GetAllSN(string sn)
+        {
+            Expression<Func<User, bool>> filter = u => u.displayName.Contains(sn);
+            List<UserDTO> users = new List<UserDTO>();
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                foreach (var item in unitOfWork.UserRepo.Get(filter))
+                {
+                    users.Add(new UserDTO
+                    {
+                        Id = item.Id,
+                        username = item.username,
+                        password = item.password,
+                        displayName = item.displayName,
+                        email = item.email,
+                        phone_number = item.phone_number,
+                        bio = item.bio,
+                        socialLink = item.socialLink,
+                        rating = item.rating,
+                        birthday = item.birthday,
+                        gender = item.gender,
+                    });
+                }
+            }
+
+            return users;
+        }
+
+        public List<UserDTO> GetAllSR(string sr)
+        {
+            int rat = int.Parse(sr);
+            Expression<Func<User, bool>> filter = u => u.rating == rat;
+            List<UserDTO> users = new List<UserDTO>();
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                foreach (var item in unitOfWork.UserRepo.Get(filter))
                 {
                     users.Add(new UserDTO
                     {
