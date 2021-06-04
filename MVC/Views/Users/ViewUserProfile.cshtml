@@ -11,65 +11,79 @@
     <h4>User details</h4>
     <hr />
     @Html.HiddenFor(model => model.Id, Model.Id)
-    <dl class="dl-horizontal">
+<dl class="dl-horizontal">
 
-        <dt>
-            @Html.DisplayNameFor(model => model.email)
-        </dt>
+    <dt>
+        @Html.DisplayNameFor(model => model.email)
+    </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.email)
-        </dd>
+    <dd>
+        @Html.DisplayFor(model => model.email)
+    </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.phone_number)
-        </dt>
+    <dt>
+        @Html.DisplayNameFor(model => model.phone_number)
+    </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.phone_number)
-        </dd>
+    <dd>
+        @Html.DisplayFor(model => model.phone_number)
+    </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.socialLink)
-        </dt>
+    <dt>
+        @Html.DisplayNameFor(model => model.socialLink)
+    </dt>
 
-        <dd>
-            <a href="@Model.socialLink">Click me</a>
-        </dd>
+    <dd>
+        <a href="@Model.socialLink">Click me</a>
+    </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.rating)
-        </dt>
+    <dt>
+        @Html.DisplayNameFor(model => model.rating)
+    </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.rating)
-        </dd>
+    <dd>
+        @Html.DisplayFor(model => model.rating)
+    </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.birthday)
-        </dt>
+    <dt>
+        @Html.DisplayNameFor(model => model.birthday)
+    </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.birthday)
-        </dd>
+    <dd>
+        @Html.DisplayFor(model => model.birthday)
+    </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.gender)
-        </dt>
+    <dt>
+        @Html.DisplayNameFor(model => model.gender)
+    </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.gender)
-        </dd>
+    <dd>
+        @Html.DisplayFor(model => model.gender)
+    </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.bio)
-        </dt>
+    <dt>
+        @Html.DisplayNameFor(model => model.bio)
+    </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.bio)
-        </dd>
+    <dd>
+        @Html.DisplayFor(model => model.bio)
+    </dd>
+    <dt>
+        @Html.DisplayName("Hosted events: ")
+    </dt>
 
-    </dl>
+    <dd>
+        <a href="https://localhost:44383/Users/UserHostedEvents?id=@Model.Id">List</a>
+    </dd>
+    <dt>
+        @Html.DisplayName("Joined events: ")
+    </dt>
+
+    <dd>
+        <a href="https://localhost:44383/Users/UserJoinedEvents?id=@Model.Id">List</a>
+    </dd>
+
+</dl>
     <div class="col-md-offset-2 col-md-10">
         @if (Model.friends)
         {

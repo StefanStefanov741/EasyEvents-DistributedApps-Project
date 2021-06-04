@@ -48,6 +48,7 @@ namespace MVC.Controllers
                     client.BaseAddress = new Uri("https://localhost:44368/api/users/");
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    //adding jw token to the request headers since the method checks for authorization
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
 
                     var content = JsonConvert.SerializeObject(jwtCookie);
@@ -56,11 +57,35 @@ namespace MVC.Controllers
                     byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
                     HttpResponseMessage response = await client.PostAsync("userfromtoken", byteContent);
-
                     string jsonString = await response.Content.ReadAsStringAsync();
-                    current_user = JsonConvert.DeserializeObject<UserDTO>(jsonString);
+                    var UserResponseData = JsonConvert.DeserializeObject<UserDTO>(jsonString);
+                    string username = "";
+                    try
+                    {
+                        username = UserResponseData.username;
+                    }
+                    catch
+                    {
+                        //someone tampered with the token
+                        HttpCookie oldCookie = new HttpCookie("jwt");
+                        oldCookie.Expires = DateTime.Now.AddDays(-1d);
+                        Response.Cookies.Add(oldCookie);
+                        ViewData["loggedin"] = false;
+                    }
+                    if (username != "")
+                    {
+                        UserDTO u = new UserDTO() { username = username };
+                        var content2 = JsonConvert.SerializeObject(u);
+                        var buffer2 = System.Text.Encoding.UTF8.GetBytes(content2);
+                        var byteContent2 = new ByteArrayContent(buffer2);
+                        byteContent2.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                        HttpResponseMessage userResponse = await client.PostAsync("getbyusername", byteContent2);
+                        string jsonStringUser = await userResponse.Content.ReadAsStringAsync();
+                        var userData = JsonConvert.DeserializeObject<UserDTO>(jsonStringUser);
+                        ViewData["DisplayName"] = userData.displayName;
+                        current_user = userData;
+                    }
                 }
-                ViewData["DisplayName"] = current_user.displayName;
             }
             List<EventListVM> events;
             //get events
@@ -186,8 +211,8 @@ namespace MVC.Controllers
                     host_id = h_id,
                     likes = 0,
                     createdOn = DateTime.Now,
-                    begins = new DateTime(model.begins_date.Year, model.begins_date.Month, model.begins_date.Day, model.begins_time.Hour,model.begins_time.Minute,0),
-                    ends = new DateTime(model.ends_date.Year, model.ends_date.Month, model.ends_date.Day, model.ends_time.Hour,model.ends_time.Minute,0),
+                    begins = new DateTime(model.begins_date.Year, model.begins_date.Month, model.begins_date.Day, model.begins_time.Hours,model.begins_time.Minutes,model.begins_time.Seconds),
+                    ends = new DateTime(model.ends_date.Year, model.ends_date.Month, model.ends_date.Day,model.ends_time.Hours, model.ends_time.Minutes, model.ends_time.Seconds),
                     participants = 1
                 };
                 if (new_event.begins > new_event.ends) {
@@ -992,24 +1017,42 @@ namespace MVC.Controllers
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
 
-                HttpResponseMessage response = await client.GetAsync("all");
+                HttpResponseMessage response = await client.GetAsync("getbyid/"+id);
 
                 string jsonString = await response.Content.ReadAsStringAsync();
-                var events = JsonConvert.DeserializeObject<List<EventDTO>>(jsonString);
-
-                for (int i = 0; i < events.Count; i++)
-                {
-                    if (events[i].Id == id)
-                    {
-                        ev = events[i];
-                        break;
-                    }
-                }
+                ev = JsonConvert.DeserializeObject<EventDTO>(jsonString);
             }
             if (ev == null) {
                 return RedirectToAction("Index", "Events");
             }
             EventVM model = new EventVM(ev);
+            //extract begins date and set value in widget
+            string[] begins_date_parts = ev.begins.Date.ToString().Split(' ');
+            string[] begins_date_string_parts = begins_date_parts[0].Split('/');
+            for (int i = 0; i < begins_date_string_parts.Length; i++)
+            {
+                if (begins_date_string_parts[i].Length < 2) {
+                    char t = begins_date_string_parts[i][0];
+                    begins_date_string_parts[i] = "0" + t;
+                }
+            }
+            string begins_date_string = begins_date_string_parts[2] + "-" + begins_date_string_parts[0] + "-" + begins_date_string_parts[1];
+            ViewData["begins_date"] = begins_date_string;
+
+            //extract ends date and set value in widget
+            string[] ends_date_parts = ev.ends.Date.ToString().Split(' ');
+            string[] ends_date_string_parts = ends_date_parts[0].Split('/');
+            for (int i = 0; i < ends_date_string_parts.Length; i++)
+            {
+                if (ends_date_string_parts[i].Length < 2)
+                {
+                    char t = ends_date_string_parts[i][0];
+                    ends_date_string_parts[i] = "0" + t;
+                }
+            }
+            string ends_date_string = ends_date_string_parts[2] + "-" + ends_date_string_parts[0] + "-" + ends_date_string_parts[1];
+            ViewData["ends_date"] = ends_date_string;
+
             return View(model);
         }
 
@@ -1042,6 +1085,11 @@ namespace MVC.Controllers
                     ViewData["DisplayName"] = current_user.displayName;
                 }
             }
+            var begins_date_string = Request["begins_date"];
+            var endss_date_string = Request["ends_date"];
+
+            model.begins_date = DateTime.Parse(begins_date_string);
+            model.ends_date = DateTime.Parse(endss_date_string);
             if (ModelState.IsValid)
             {
                 EventDTO eventDto = new EventDTO()
@@ -1053,8 +1101,8 @@ namespace MVC.Controllers
                     host_id = model.host_id,
                     likes = model.likes,
                     createdOn = model.createdOn,
-                    begins = new DateTime(model.begins_date.Year, model.begins_date.Month, model.begins_date.Day, model.begins_time.Hour, model.begins_time.Minute, 0),
-                    ends = new DateTime(model.ends_date.Year, model.ends_date.Month, model.ends_date.Day, model.ends_time.Hour, model.ends_time.Minute, 0),
+                    begins = new DateTime(model.begins_date.Year, model.begins_date.Month, model.begins_date.Day, model.begins_time.Hours, model.begins_time.Minutes, model.begins_time.Seconds),
+                    ends = new DateTime(model.ends_date.Year, model.ends_date.Month, model.ends_date.Day, model.ends_time.Hours, model.ends_time.Minutes, model.ends_time.Seconds),
                     participants = model.participants
                 };
                 //update

@@ -2,10 +2,8 @@
 using Microsoft.OData.Edm;
 using NodaTime;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+
 
 namespace MVC.ViewModels
 {
@@ -28,6 +26,7 @@ namespace MVC.ViewModels
         [Required]
         public int host_id { get; set; }
         public DateTime createdOn { get; set; }
+
         [Required]
         [Display(Name = "Begins date")]
         [DataType(DataType.Date)]
@@ -36,7 +35,7 @@ namespace MVC.ViewModels
         [Required]
         [Display(Name = "Begins time")]
         [DataType(DataType.Time)]
-        public DateTime begins_time { get; set; }
+        public TimeSpan begins_time { get; set; }
         [Required]
         [Display(Name = "Ends date")]
         [DataType(DataType.Date)]
@@ -45,7 +44,7 @@ namespace MVC.ViewModels
         [Required]
         [Display(Name = "Ends time")]
         [DataType(DataType.Time)]
-        public DateTime ends_time { get; set; }
+        public TimeSpan ends_time { get; set; }
 
         public int participants { get; set; }
         public int likes { get; set; }
@@ -59,9 +58,9 @@ namespace MVC.ViewModels
             host_id = eventDto.host_id;
             createdOn = eventDto.createdOn;
             begins_date = eventDto.begins.Date;
-            begins_time = eventDto.begins;
+            begins_time = new TimeSpan(eventDto.begins.Hour,eventDto.begins.Minute,eventDto.begins.Second);
             ends_date = eventDto.ends.Date;
-            ends_time = eventDto.ends;
+            ends_time = new TimeSpan(eventDto.ends.Hour, eventDto.ends.Minute, eventDto.ends.Second);
             participants = eventDto.participants;
             likes = eventDto.likes;
         }

@@ -19,7 +19,7 @@ namespace ApplicationService.Implementations
             {
                 foreach (var item in unitOfWork.FriendshipRepo.Get())
                 {
-                    friends.Add(new FriendshipDTO
+                    FriendshipDTO fdto = new FriendshipDTO
                     {
                         Id = item.Id,
                         user1_id = item.user1_id,
@@ -27,7 +27,30 @@ namespace ApplicationService.Implementations
                         befriend_date = item.befriend_date,
                         pending = item.pending,
                         friendshipTier = item.friendshipTier
-                    });
+                    };
+                    if (fdto.friendshipTier == "Friends")
+                    {
+                        List<ParticipantToEvent> user_1events = unitOfWork.PteRepo.Get(p => p.Participant_id == fdto.user1_id).ToList();
+                        List<ParticipantToEvent> user_2events = unitOfWork.PteRepo.Get(p => p.Participant_id == fdto.user2_id).ToList();
+                        int common_events = 0;
+                        for (int i = 0; i < user_1events.Count; i++)
+                        {
+                            for (int j = 0; j < user_2events.Count; j++)
+                            {
+                                if (user_1events[i].Id == user_2events[j].Id) {
+                                    common_events++;
+                                }
+                            }
+                        }
+                        if (common_events >= 10) {
+                            fdto.friendshipTier = "Best Friends";
+                        }
+                    }
+                    if (fdto.friendshipTier == "Acquaintances" && (DateTime.Now > fdto.befriend_date.AddDays(7))) {
+                        fdto.friendshipTier = "Friends";
+                        Update(fdto);
+                    }
+                    friends.Add(fdto);
                 }
             }
 
@@ -50,6 +73,7 @@ namespace ApplicationService.Implementations
             }
             else {
                 fr.pending = false;
+                fr.friendshipTier = "Acquaintances";
                 return Update(fr);
             }
         }

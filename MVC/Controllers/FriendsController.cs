@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -177,6 +178,13 @@ namespace MVC.Controllers
                         }
                     }
                     if (add) {
+                        //set proper friendship tier
+                        for (int i = 0; i < friendships.Count; i++)
+                        {
+                            if (friend.Id == friendships[i].user1_id || friend.Id == friendships[i].user2_id) {
+                                friend.friendshipTier = friendships[i].friendshipTier;
+                            }
+                        }
                         myFriends.Add(friend);
                     }
                 }
@@ -184,7 +192,7 @@ namespace MVC.Controllers
             return View(myFriends);
         }
 
-        public async System.Threading.Tasks.Task<ActionResult> AcceptRequest(int id) {
+        public async Task<ActionResult> AcceptRequest(int id) {
             //test if user is still logged in and authorized
             HttpCookie jwtCookie = HttpContext.Request.Cookies.Get("jwt");
             //check if user is logged in or not
@@ -241,7 +249,7 @@ namespace MVC.Controllers
             return RedirectToAction("Index","Users");
         }
 
-        public async System.Threading.Tasks.Task<ActionResult> SendRequest(int id)
+        public async Task<ActionResult> SendRequest(int id)
         {
             //test if user is still logged in and authorized
             HttpCookie jwtCookie = HttpContext.Request.Cookies.Get("jwt");
@@ -298,7 +306,7 @@ namespace MVC.Controllers
             return RedirectToAction("Index", "Users");
         }
 
-        public async System.Threading.Tasks.Task<ActionResult> Unfriend(int id) {
+        public async Task<ActionResult> Unfriend(int id) {
             //test if user is still logged in and authorized
             HttpCookie jwtCookie = HttpContext.Request.Cookies.Get("jwt");
             //check if user is logged in or not

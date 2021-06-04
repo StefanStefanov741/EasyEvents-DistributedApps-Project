@@ -1,0 +1,65 @@
+﻿@model IEnumerable<MVC.ViewModels.EventListVM>
+
+@{
+    ViewBag.Title = "User's joined events";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Joined events</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.location)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.begins)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ends)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ended)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.likes)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.participants)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.title)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.location)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.begins)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.ends)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.ended)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.likes)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.participants)
+    </td>
+    <td>
+        <a href="https://localhost:44383/Events/ViewDetails?id=@item.id">View</a>
+    </td>
+</tr>
+}
+
+</table>

@@ -5,16 +5,14 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
-<h2>Edit event</h2>
-
+<h2>EditEvent</h2>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-
+    
 <div class="form-horizontal">
-    <h4>information</h4>
+    <h4>EventVM</h4>
     <hr />
     @Html.HiddenFor(model => model.participants, Model.participants)
     @Html.HiddenFor(model => model.host_id, Model.host_id)
@@ -22,6 +20,7 @@
     @Html.HiddenFor(model => model.createdOn, Model.createdOn)
     @Html.HiddenFor(model => model.likes, Model.likes)
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
     <div class="form-group">
         @Html.LabelFor(model => model.title, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
@@ -45,11 +44,11 @@
             @Html.ValidationMessageFor(model => model.location, "", new { @class = "text-danger" })
         </div>
     </div>
-
+    
     <div class="form-group">
         @Html.LabelFor(model => model.begins_date, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @Html.EditorFor(model => model.begins_date, new { htmlAttributes = new { @class = "form-control"}})
+            <Input id="begins_date" name="begins_date" type="date" value ="@ViewData["begins_date"]" class="form-control">
             @Html.ValidationMessageFor(model => model.begins_date, "", new { @class = "text-danger" })
         </div>
     </div>
@@ -65,7 +64,7 @@
     <div class="form-group">
         @Html.LabelFor(model => model.ends_date, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @Html.EditorFor(model => model.ends_date, new { htmlAttributes = new { @class = "form-control" } })
+            <Input id="ends_date" name="ends_date" type="date" value="@ViewData["ends_date"]" class="form-control">
             @Html.ValidationMessageFor(model => model.ends_date, "", new { @class = "text-danger" })
         </div>
     </div>

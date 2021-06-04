@@ -16,6 +16,7 @@ namespace Data.Entities
         [Required]
         public DateTime befriend_date { get; set; }
         public bool pending { get; set; }
+        [StringLength(50)]
         public string friendshipTier { get; set; }
     }
 }

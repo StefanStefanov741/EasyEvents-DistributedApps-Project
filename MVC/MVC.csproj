@@ -255,10 +255,12 @@
     <Content Include="Views\Events\Index.cshtml" />
     <Content Include="Views\Events\Create.cshtml" />
     <Content Include="Views\Events\ViewDetails.cshtml" />
-    <Content Include="Views\Events\EditEvent.cshtml" />
     <Content Include="Views\Friends\Index.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
     <Content Include="Views\Users\ViewUserProfile.cshtml" />
+    <Content Include="Views\Users\UserHostedEvents.cshtml" />
+    <Content Include="Views\Users\UserJoinedEvents.cshtml" />
+    <Content Include="Views\Events\EditEvent.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

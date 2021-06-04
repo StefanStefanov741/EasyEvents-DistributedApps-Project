@@ -20,7 +20,7 @@ namespace ApplicationService.Implementations
             {
                 foreach (var item in unitOfWork.EventRepo.Get())
                 {
-                    events.Add(new EventDTO
+                    EventDTO eventt = new EventDTO
                     {
                         Id = item.Id,
                         title = item.title,
@@ -33,7 +33,12 @@ namespace ApplicationService.Implementations
                         ends = item.ends,
                         ended = item.ended,
                         participants = item.participants
-                    });
+                    };
+                    if (!eventt.ended&&(eventt.ends < DateTime.Now)) {
+                        UpdateEndEvent(eventt);
+                        eventt.ended = true;
+                    }
+                    events.Add(eventt);
                 }
             }
 
@@ -218,19 +223,23 @@ namespace ApplicationService.Implementations
         public bool Like(int id)
         {
             Event toLike = null;
+            User toRate = null;
             using (UnitOfWork unitOfWork = new UnitOfWork())
             {
                 toLike = unitOfWork.EventRepo.GetByID(id);
+                toRate = unitOfWork.UserRepo.GetByID(toLike.host_id);
             }
             if (toLike != null)
             {
                 toLike.likes++;
+                toRate.rating++;
             }
             try
             {
                 using (UnitOfWork unitOfWork = new UnitOfWork())
                 {
                     unitOfWork.EventRepo.Update(toLike);
+                    unitOfWork.UserRepo.Update(toRate);
                     unitOfWork.Save();
                 }
                 return true;
@@ -244,19 +253,23 @@ namespace ApplicationService.Implementations
         public bool Dislike(int id)
         {
             Event toDislike = null;
+            User toDerate = null;
             using (UnitOfWork unitOfWork = new UnitOfWork())
             {
                 toDislike = unitOfWork.EventRepo.GetByID(id);
+                toDerate = unitOfWork.UserRepo.GetByID(toDislike.host_id);
             }
             if (toDislike != null)
             {
                 toDislike.likes--;
+                toDerate.rating--;
             }
             try
             {
                 using (UnitOfWork unitOfWork = new UnitOfWork())
                 {
                     unitOfWork.EventRepo.Update(toDislike);
+                    unitOfWork.UserRepo.Update(toDerate);
                     unitOfWork.Save();
                 }
                 return true;
@@ -337,6 +350,11 @@ namespace ApplicationService.Implementations
             }
         }
 
+        public void UpdateEndEvent(EventDTO ev)
+        {
+            ev.ended = true;
+            Update(ev);
+        }
         public EventDTO EventToDto(Event ev)
         {
             if (ev == null)

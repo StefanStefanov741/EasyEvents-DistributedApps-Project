@@ -742,5 +742,137 @@ namespace MVC.Controllers
             return RedirectToAction("Index","Home");
         }
 
+        public async Task<ActionResult> UserHostedEvents(int id) {
+            //test if user is still logged in and authorized
+            HttpCookie jwtCookie = HttpContext.Request.Cookies.Get("jwt");
+            //check if user is logged in or not
+            UserDTO current_user = null;
+            if (jwtCookie == null)
+            {
+                ViewData["loggedin"] = false;
+            }
+            else
+            {
+                ViewData["loggedin"] = true;
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = url;
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
+
+                    var content = JsonConvert.SerializeObject(jwtCookie);
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(content);
+                    var byteContent = new ByteArrayContent(buffer);
+                    byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                    HttpResponseMessage response = await client.PostAsync("userfromtoken", byteContent);
+
+                    string jsonString = await response.Content.ReadAsStringAsync();
+                    current_user = JsonConvert.DeserializeObject<UserDTO>(jsonString);
+                }
+                ViewData["DisplayName"] = current_user.displayName;
+            }
+            List<EventDTO> All_events;
+            //get all events
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:44368/api/events/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                HttpResponseMessage response = null;
+                response = await client.GetAsync("all");
+                string jsonString = await response.Content.ReadAsStringAsync();
+                All_events = JsonConvert.DeserializeObject<List<EventDTO>>(jsonString);
+            }
+            if (current_user == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
+            //get events hosted by the user
+            List<EventListVM> events = new List<EventListVM>();
+            for (int i = 0; i < All_events.Count; i++)
+            {
+                if (All_events[i].host_id == id) {
+                    events.Add(new EventListVM(All_events[i]));
+                }
+            }
+            return View(events);
+        }
+
+        public async Task<ActionResult> UserJoinedEvents(int id)
+        {
+            //test if user is still logged in and authorized
+            HttpCookie jwtCookie = HttpContext.Request.Cookies.Get("jwt");
+            //check if user is logged in or not
+            UserDTO current_user = null;
+            if (jwtCookie == null)
+            {
+                ViewData["loggedin"] = false;
+            }
+            else
+            {
+                ViewData["loggedin"] = true;
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = url;
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
+
+                    var content = JsonConvert.SerializeObject(jwtCookie);
+                    var buffer = System.Text.Encoding.UTF8.GetBytes(content);
+                    var byteContent = new ByteArrayContent(buffer);
+                    byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                    HttpResponseMessage response = await client.PostAsync("userfromtoken", byteContent);
+
+                    string jsonString = await response.Content.ReadAsStringAsync();
+                    current_user = JsonConvert.DeserializeObject<UserDTO>(jsonString);
+                }
+                ViewData["DisplayName"] = current_user.displayName;
+            }
+            if (current_user == null)
+            {
+                return RedirectToAction("Login", "Users");
+            }
+            List<EventDTO> All_events;
+            //get all events
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:44368/api/events/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                HttpResponseMessage response = null;
+                response = await client.GetAsync("all");
+                string jsonString = await response.Content.ReadAsStringAsync();
+                All_events = JsonConvert.DeserializeObject<List<EventDTO>>(jsonString);
+            }
+            //get pte's
+            List<ParticipantToEventDTO> pteList = new List<ParticipantToEventDTO>();
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:44368/api/pte/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
+                HttpResponseMessage response = null;
+                response = await client.GetAsync("all");
+                string jsonString = await response.Content.ReadAsStringAsync();
+                pteList = JsonConvert.DeserializeObject<List<ParticipantToEventDTO>>(jsonString);
+            }
+            List<EventListVM> events = new List<EventListVM>();
+            for (int i = 0; i < All_events.Count; i++)
+            {
+                for (int j = 0; j < pteList.Count; j++)
+                {
+                    if (pteList[j].Event_id == All_events[i].Id && pteList[j].Participant_id == id) {
+                        events.Add(new EventListVM(All_events[i]));
+                    }
+                }
+            }
+            return View(events);
+        }
+
     }
 }

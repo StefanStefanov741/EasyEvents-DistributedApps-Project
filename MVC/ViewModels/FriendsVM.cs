@@ -32,7 +32,6 @@ namespace MVC.ViewModels
             displayName = userDto.displayName;
             email = userDto.email;
             rating = userDto.rating;
-            friendshipTier = "Acquaintance";
         }
     }
 }

@@ -71,6 +71,10 @@
     <Compile Include="Migrations\202105211122296_Likes.designer.cs">
       <DependentUpon>202105211122296_Likes.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202106021010517_RestrictionToFriendships.cs" />
+    <Compile Include="Migrations\202106021010517_RestrictionToFriendships.designer.cs">
+      <DependentUpon>202106021010517_RestrictionToFriendships.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -90,6 +94,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202105211122296_Likes.resx">
       <DependentUpon>202105211122296_Likes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202106021010517_RestrictionToFriendships.resx">
+      <DependentUpon>202106021010517_RestrictionToFriendships.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
