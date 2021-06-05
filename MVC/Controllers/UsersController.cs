@@ -143,7 +143,7 @@ namespace MVC.Controllers
             {
                 for (int j = 0; j < existing_friendships.Count; j++)
                 {
-                    if (users[i].id == existing_friendships[j].user1_id || users[i].id == existing_friendships[j].user2_id) {
+                    if ((users[i].id == existing_friendships[j].user1_id && current_user.Id == existing_friendships[j].user2_id) || (users[i].id == existing_friendships[j].user2_id && current_user.Id == existing_friendships[j].user1_id)) {
                         users[i].sentRequest = true;
                     }
                 }

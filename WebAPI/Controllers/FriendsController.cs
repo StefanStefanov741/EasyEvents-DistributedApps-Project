@@ -28,6 +28,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
+        [Route("all/{tier}")]
+        public IHttpActionResult GetAll(string tier)
+        {
+            return Json(_service.GetAll(tier));
+        }
+
+        [HttpGet]
         [Route("getbyid/{id}")]
         public IHttpActionResult GetById(int id)
         {

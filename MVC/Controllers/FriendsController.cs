@@ -15,7 +15,7 @@ namespace MVC.Controllers
     public class FriendsController : Controller
     {
         private readonly Uri url = new Uri("https://localhost:44368/api/friends/");
-        public async System.Threading.Tasks.Task<ActionResult> Index(string sn,string se,string sr)
+        public async System.Threading.Tasks.Task<ActionResult> Index(string sn,string se,string sr, string sf)
         {
             if (sn != null)
             {
@@ -40,6 +40,14 @@ namespace MVC.Controllers
             else
             {
                 ViewData["srVal"] = "";
+            }
+            if (sf != null)
+            {
+                ViewData["sfVal"] = sf.ToString();
+            }
+            else
+            {
+                ViewData["sfVal"] = "";
             }
             //test if user is still logged in and authorized
             HttpCookie jwtCookie = HttpContext.Request.Cookies.Get("jwt");
@@ -79,9 +87,17 @@ namespace MVC.Controllers
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtCookie.Value);
-
-                HttpResponseMessage response = await client.GetAsync("all");
-
+                HttpResponseMessage response = null;
+                if (sf == null || sf == "")
+                {
+                    response = await client.GetAsync("all");
+                }
+                else {
+                    response = await client.GetAsync("all/"+sf);
+                }
+                if (response == null) {
+                    return RedirectToAction("Index", "Home");
+                }
                 string jsonString = await response.Content.ReadAsStringAsync();
                 friendships = JsonConvert.DeserializeObject<List<FriendshipDTO>>(jsonString);
             }
@@ -117,21 +133,22 @@ namespace MVC.Controllers
                     HttpResponseMessage response = await client.GetAsync("getbyid/"+f_id);
                     string jsonString = await response.Content.ReadAsStringAsync();
                     FriendsVM friend = JsonConvert.DeserializeObject<FriendsVM>(jsonString);
-                    for (int i = 0; i < friendships.Count; i++)
+                    for (int i = 0; i < myfriendships.Count; i++)
                     {
-                        if (friendships[i].pending) {
-                            if (friendships[i].user2_id == f_id)
+                        if (myfriendships[i].pending) {
+                            if (myfriendships[i].user2_id == f_id)
                             {
                                 friend.sentpending = true;
                                 break;
                             }
-                            else if (friendships[i].user1_id == f_id)
+                            else if (myfriendships[i].user1_id == f_id)
                             {
                                 friend.recievedpending = true;
                                 break;
                             }
                         }
                     }
+                    //apply search
                     int rat = -1;
                     var isNumberic = int.TryParse(sr, out rat);
                     if (!isNumberic)
@@ -179,10 +196,10 @@ namespace MVC.Controllers
                     }
                     if (add) {
                         //set proper friendship tier
-                        for (int i = 0; i < friendships.Count; i++)
+                        for (int i = 0; i < myfriendships.Count; i++)
                         {
-                            if (friend.Id == friendships[i].user1_id || friend.Id == friendships[i].user2_id) {
-                                friend.friendshipTier = friendships[i].friendshipTier;
+                            if (friend.Id == myfriendships[i].user1_id || friend.Id == myfriendships[i].user2_id) {
+                                friend.friendshipTier = myfriendships[i].friendshipTier;
                             }
                         }
                         myFriends.Add(friend);

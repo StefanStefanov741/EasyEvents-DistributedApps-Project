@@ -5,6 +5,7 @@ using Repository.Implementations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -47,6 +48,55 @@ namespace ApplicationService.Implementations
                         }
                     }
                     if (fdto.friendshipTier == "Acquaintances" && (DateTime.Now > fdto.befriend_date.AddDays(7))) {
+                        fdto.friendshipTier = "Friends";
+                        Update(fdto);
+                    }
+                    friends.Add(fdto);
+                }
+            }
+
+            return friends;
+        }
+
+        public List<FriendshipDTO> GetAll(string tier)
+        {
+            Expression<Func<Friendship, bool>> filter = f => f.friendshipTier.Contains(tier);
+            List<FriendshipDTO> friends = new List<FriendshipDTO>();
+            using (UnitOfWork unitOfWork = new UnitOfWork())
+            {
+                foreach (var item in unitOfWork.FriendshipRepo.Get(filter))
+                {
+                    FriendshipDTO fdto = new FriendshipDTO
+                    {
+                        Id = item.Id,
+                        user1_id = item.user1_id,
+                        user2_id = item.user2_id,
+                        befriend_date = item.befriend_date,
+                        pending = item.pending,
+                        friendshipTier = item.friendshipTier
+                    };
+                    if (fdto.friendshipTier == "Friends")
+                    {
+                        List<ParticipantToEvent> user_1events = unitOfWork.PteRepo.Get(p => p.Participant_id == fdto.user1_id).ToList();
+                        List<ParticipantToEvent> user_2events = unitOfWork.PteRepo.Get(p => p.Participant_id == fdto.user2_id).ToList();
+                        int common_events = 0;
+                        for (int i = 0; i < user_1events.Count; i++)
+                        {
+                            for (int j = 0; j < user_2events.Count; j++)
+                            {
+                                if (user_1events[i].Id == user_2events[j].Id)
+                                {
+                                    common_events++;
+                                }
+                            }
+                        }
+                        if (common_events >= 10)
+                        {
+                            fdto.friendshipTier = "Best Friends";
+                        }
+                    }
+                    if (fdto.friendshipTier == "Acquaintances" && (DateTime.Now > fdto.befriend_date.AddDays(7)))
+                    {
                         fdto.friendshipTier = "Friends";
                         Update(fdto);
                     }
@@ -150,7 +200,7 @@ namespace ApplicationService.Implementations
                 using (UnitOfWork unitOfWork = new UnitOfWork())
                 {
                     Friendship friend = unitOfWork.FriendshipRepo.GetByID(id);
-                    unitOfWork.UserRepo.Delete(friend);
+                    unitOfWork.FriendshipRepo.Delete(friend);
                     unitOfWork.Save();
                 }
                 return true;
